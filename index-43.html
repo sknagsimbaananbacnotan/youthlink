@@ -1,0 +1,928 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YouthLink v2 — SK Nagsimbaanan</title>
+<style>
+:root{--nav:#101827;--bg:#f3f6fb;--card:#fff;--text:#182235;--muted:#6b7280;--blue:#2563eb;--line:#e5e7eb;--green:#15803d;--red:#b91c1c;--amber:#b45309}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}.app{display:flex;min-height:100vh}
+aside{width:270px;background:var(--nav);color:#fff;position:fixed;inset:0 auto 0 0;padding:22px 14px}.brand{padding:8px 10px 22px;border-bottom:1px solid #334155;display:flex;align-items:center;gap:10px}.brand img{width:48px;height:48px;object-fit:contain;flex:0 0 48px}.brandtext{min-width:0}.brand b{font-size:22px}.brand small{display:block;color:#94a3b8;margin-top:4px}
+.nav{margin-top:14px}.nav div{padding:11px 12px;border-radius:9px;margin:3px 0;color:#cbd5e1;cursor:pointer}.nav div:hover,.nav .active{background:#253247;color:#fff}.nav span{display:inline-block;width:30px}
+main{margin-left:270px;width:calc(100% - 270px)}header{height:68px;background:#fff;border-bottom:1px solid var(--line);padding:0 26px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:3}.content{padding:26px}
+.panel{display:none}.panel.active{display:block}.hero{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}.hero h1{margin:0 0 5px}.muted,.label{color:var(--muted);font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;box-shadow:0 2px 8px #0f172a0a}.metric{font-size:28px;font-weight:800;margin:7px 0}
+.grid{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-top:14px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}.primary{background:var(--blue);color:#fff}.ghost{background:#fff;border:1px solid var(--line)}.danger{background:#fee2e2;color:var(--red)}
+input,select,textarea{width:100%;padding:10px;font-weight:700;} input[type=text],input[type=email],input[type=tel],textarea{text-transform:uppercase;} border:1px solid #d1d5db;border-radius:8px;background:#fff}.field label{display:block;margin-bottom:5px;font-size:12px;color:var(--muted);font-weight:700}.full{grid-column:1/-1}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:10px 7px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--muted);white-space:nowrap}.scroll{overflow:auto}
+.badge{display:inline-block;padding:4px 7px;border-radius:999px;font-size:10px;font-weight:800}.ok{background:#dcfce7;color:#166534}.warn{background:#fef3c7;color:#92400e}.old{background:#fee2e2;color:#991b1b}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.toolbar>*{width:auto}.toolbar input{flex:1;min-width:220px}
+.notice{padding:11px;border-radius:8px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;font-size:12px;margin:10px 0}.rank{font-size:18px;font-weight:800}.rank1{font-size:22px}
+dialog{border:0;border-radius:14px;max-width:900px;width:92%;padding:0;box-shadow:0 20px 70px #0004}dialog::backdrop{background:#0008}.modalhead{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}.modalbody{padding:20px;max-height:72vh;overflow:auto}.modalfoot{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}
+@media(max-width:950px){aside{width:78px}.brand{padding-left:1px;padding-right:1px;justify-content:center}.brand img{width:44px;height:44px;flex-basis:44px}.brand small,.brand b,.nav label{display:none}main{margin-left:78px;width:calc(100% - 78px)}.cards{grid-template-columns:1fr 1fr}.grid,.grid2{grid-template-columns:1fr}}
+
+.segmented{display:flex;align-items:center;gap:6px}
+.segmented input{min-width:0;text-align:center}
+.segmented span{font-weight:700}
+.segmented select{max-width:85px}
+
+.directory-table{min-width:2400px}
+.directory-table th{position:sticky;top:0;background:#fff;z-index:1;font-size:11px}
+.directory-table td{font-size:11px;vertical-align:top}
+.directory-table .ghost{padding:6px 8px;margin:2px;font-size:10px}
+
+/* ===== YOUTHLINK SECURE LOGIN ===== */
+#authGate{position:fixed;inset:0;z-index:99999;background:#f4f7fb;display:flex;align-items:center;justify-content:center;padding:24px}
+.authbox{width:min(430px,100%);background:#fff;border:1px solid #dbe3ee;border-radius:14px;box-shadow:0 12px 35px #0f172a1a;padding:34px 36px 30px;text-align:left}
+.authlogo{display:block;width:104px;height:104px;object-fit:contain;margin:0 auto 14px}.authbrand{text-align:center;font-size:31px;font-weight:900;color:#0f172a;letter-spacing:-.5px}.authoffice{text-align:center;font-size:12px;font-weight:800;color:#2563eb;text-transform:uppercase;letter-spacing:.7px;margin-top:6px}.authsub{text-align:center;color:#64748b;margin:5px 0 24px;font-size:14px}.authwelcome{text-align:center;color:#2563eb;font-size:16px;font-weight:800;margin:0 0 22px}
+.authbox label{display:block;font-size:12px;font-weight:800;margin:12px 0 6px}.authbox input{width:100%;box-sizing:border-box}
+.autherr{min-height:20px;color:#b91c1c;font-size:13px;margin-top:10px}
+#logoutBtn{margin-left:10px;padding:7px 11px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:700}
+
+
+/* ===== 2026 MODERN SK PORTAL THEME ===== */
+:root{--nav:#ffffff;--bg:#f5f8ff;--card:#ffffff;--text:#10203e;--muted:#64748b;--blue:#2563eb;--line:#dce7f7;--green:#15803d;--red:#b91c1c;--amber:#b45309}
+body{background:linear-gradient(135deg,#f8fbff 0%,#eef5ff 45%,#f7f4ff 100%);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+.app{background:transparent}
+aside{width:276px;background:rgba(255,255,255,.94);color:#10203e;border-right:1px solid #e3ebf7;box-shadow:8px 0 32px rgba(37,99,235,.05);padding:18px 14px;backdrop-filter:blur(18px)}
+.brand{border:0;background:linear-gradient(135deg,#f8fbff,#eef4ff);border:1px solid #e2eaf8;border-radius:20px;padding:14px 13px;margin-bottom:16px;box-shadow:0 10px 25px rgba(30,64,175,.07)}
+.brand img{width:52px;height:52px;flex-basis:52px;filter:drop-shadow(0 5px 8px rgba(37,99,235,.16))}.brand b{font-size:22px;color:#11203d}.brand small{color:#64748b;line-height:1.35}
+.nav{margin-top:8px}.nav div{color:#4b5d78;border:1px solid transparent;padding:12px 13px;border-radius:13px;font-weight:650;transition:.18s ease}.nav div:hover{background:#f0f5ff;color:#1d4ed8;border-color:#e1eafe;transform:translateX(2px)}.nav .active{background:linear-gradient(90deg,#eaf2ff,#f2edff);color:#1d4ed8;border-color:#d8e5ff;box-shadow:0 7px 18px rgba(37,99,235,.08)}
+main{margin-left:276px;width:calc(100% - 276px)}
+header{height:76px;background:rgba(255,255,255,.9);border-bottom:1px solid #e5edf8;padding:0 28px;backdrop-filter:blur(16px);box-shadow:0 4px 20px rgba(15,23,42,.035)}
+.content{padding:30px;max-width:1700px;margin:0 auto}
+.hero{background:linear-gradient(120deg,rgba(255,255,255,.96),rgba(238,246,255,.96) 55%,rgba(244,239,255,.96));border:1px solid #dfe9f8;border-radius:24px;padding:24px 26px;box-shadow:0 16px 45px rgba(37,99,235,.08);position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;width:210px;height:210px;border-radius:50%;right:-70px;top:-105px;background:radial-gradient(circle,rgba(59,130,246,.18),rgba(124,58,237,.05) 58%,transparent 70%);pointer-events:none}.hero h1{font-size:31px;letter-spacing:-.7px;color:#10203e}.hero .muted{font-size:14px}
+.card{border:1px solid #e0e8f5;border-radius:19px;box-shadow:0 10px 28px rgba(30,64,175,.055);background:rgba(255,255,255,.96)}
+.cards .card{transition:.18s ease}.cards .card:hover{transform:translateY(-2px);box-shadow:0 16px 32px rgba(30,64,175,.09)}
+.metric{color:#172554}.label{font-weight:700;color:#5b6b84}
+button.primary,.primary{border-radius:13px;background:linear-gradient(100deg,#2563eb,#4f46e5 70%,#7c3aed);box-shadow:0 9px 20px rgba(37,99,235,.22);border:0}button.primary:hover,.primary:hover{filter:brightness(1.04);transform:translateY(-1px)}
+button.ghost,.ghost{border-radius:11px;background:#fff;border-color:#d9e4f3;color:#334155}
+input,select,textarea{border-radius:11px!important;border-color:#d9e4f3!important;background:#fbfdff!important}input:focus,select:focus,textarea:focus{outline:none!important;border-color:#60a5fa!important;box-shadow:0 0 0 3px rgba(59,130,246,.10)}
+table{border-collapse:separate;border-spacing:0}thead th{background:#f6f9ff!important;color:#52627a}tbody tr:hover{background:#f8fbff}
+dialog{border:1px solid #dce6f5!important;border-radius:22px!important;box-shadow:0 28px 80px rgba(15,23,42,.22)!important}
+#logoutBtn{border-radius:12px;border-color:#d9e4f3;color:#334155;padding:8px 13px}
+#authGate{background:radial-gradient(circle at 18% 20%,rgba(96,165,250,.20),transparent 31%),radial-gradient(circle at 84% 72%,rgba(124,58,237,.16),transparent 30%),linear-gradient(135deg,#f8fbff,#edf5ff 52%,#f6f1ff)}
+.authbox{border:1px solid rgba(219,231,248,.95);border-radius:26px;box-shadow:0 28px 80px rgba(30,64,175,.15);padding:36px 40px 34px;background:rgba(255,255,255,.94);backdrop-filter:blur(18px)}
+.authlogo{width:112px;height:112px;filter:drop-shadow(0 9px 16px rgba(37,99,235,.15))}.authbrand{font-size:34px;letter-spacing:-1px}.authoffice{color:#315fca}.authwelcome{font-size:17px;background:linear-gradient(90deg,#2563eb,#6d28d9);-webkit-background-clip:text;color:transparent}.authbox input{height:46px}.authbox button.primary{height:46px;width:100%;font-weight:800}
+.notice{border-radius:13px!important;background:linear-gradient(90deg,#eef6ff,#f4f1ff)!important;border-color:#cfe0fb!important}
+@media(max-width:900px){aside{width:84px;padding:14px 8px}.brand{padding:10px;justify-content:center}.brand img{width:48px;height:48px}.brandtext{display:none}.nav label{display:none}.nav span{width:auto;font-size:20px}.nav div{text-align:center;padding:12px 8px}main{margin-left:84px;width:calc(100% - 84px)}header{padding:0 16px}.content{padding:18px}.hero{padding:20px}.hero h1{font-size:25px}}
+
+
+/* Modern government navigation icons */
+.nav .govicon{width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;background:#eef4ff;border:1px solid #dbe8ff;color:#315dba;flex:0 0 36px;transition:.18s ease}
+.nav .govicon svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.nav div:hover .govicon{background:#e3edff;color:#1d4ed8;transform:translateY(-1px)}
+.nav div.active .govicon{background:#2563eb;color:#fff;border-color:#2563eb;box-shadow:0 5px 14px rgba(37,99,235,.22)}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body><div class="app"><aside><div class="brand"><img src="logo.png" alt="Sangguniang Kabataan ng Nagsimbaanan Logo"><div class="brandtext"><b>YouthLink</b><small>Office of the SK Nagsimbaanan<br>Youth Information System</small></div></div>
+<div class="nav">
+<div class="active" data-p="dash"><span class="govicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z"/></svg></span><label>Dashboard</label></div>
+<div data-p="kk"><span class="govicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><label>KK Profiling</label></div>
+<div data-p="events"><span class="govicon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 14h3M8 17h6"/></svg></span><label>Events & Attendance</label></div>
+<div data-p="activity"><span class="govicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9M10 19V5M16 19v-7M22 19V3M2 19h22"/></svg></span><label>Participation Monitor</label></div>
+<div data-p="demo"><span class="govicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V10M10 21V3M16 21v-6M22 21V7"/><path d="M2 21h22"/></svg></span><label>Demographics</label></div>
+<div data-p="sms"><span class="govicon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span><label>SMS Center</label></div>
+<div data-p="exports"><span class="govicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg></span><label>Reports & Export</label></div>
+</div></aside>
+<main><header><div><b style="display:block;font-size:15px">OFFICE OF THE SK NAGSIMBAANAN</b><span style="display:block;font-size:12px;color:#64748b;margin-top:2px">Youth Information System • <b style="color:#2563eb">YouthLink</b> • <span id="title">Dashboard</span></span></div><span class="muted"><span id="signedInAs">SK Nagsimbaanan • Authorized Staff</span><button id="logoutBtn" onclick="logoutYouthLink()">Logout</button></span></header><div class="content">
+
+<section id="dash" class="panel active">
+<div class="hero"><div><h1>YouthLink Dashboard</h1><div class="muted">Live registry, eligibility, birthdays, attendance and youth participation.</div></div><button class="primary" onclick="openMember()">+ Add KK Member</button></div>
+<div class="cards">
+<div class="card"><div class="label">Active KK Members</div><div class="metric" id="mActive">5</div><div class="muted">Current eligible registry</div></div>
+<div class="card"><div class="label">Birthdays This Month</div><div class="metric" id="mBirth">0</div><div class="muted">Calculated from date of birth</div></div>
+<div class="card"><div class="label">House-to-House Verified</div><div class="metric" id="mVerified">0</div><div class="muted">Confirmed / updated records</div></div>
+<div class="card"><div class="label">Events Recorded</div><div class="metric" id="mEvents">2</div><div class="muted">Attendance linked to profiles</div></div>
+</div>
+<div class="grid"><div class="card"><h3>Upcoming / Recent Birthdays</h3><div id="birthList"></div></div>
+<div class="card"><h3>Eligibility Alerts</h3><div id="ageList"></div><div class="notice">Members beyond the configured KK age threshold are flagged for review and archiving, not automatically deleted.</div></div></div>
+</section>
+
+<section id="kk" class="panel">
+<div class="hero"><div><h1>KK Profiling Database</h1><div class="muted">Digital counterpart of your profiling sheet. Age and age group are calculated automatically.</div></div><button class="primary" onclick="openMember()">+ Encode Profiling Form</button></div>
+<div class="card"><div class="toolbar">
+<input id="search" placeholder="Search name, ID, sector or mobile..." oninput="renderMembers()">
+<select id="sectorFilter" onchange="renderMembers()"><option value="">All Sectors</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
+<select id="recordFilter" onchange="renderMembers()"><option value="ACTIVE">Active / For Review</option><option value="ARCHIVED">Archived</option><option value="ALL">All Records</option></select>
+<button class="ghost" onclick="nav('exports')">Export</button></div>
+<div class="notice" style="margin-bottom:10px"><b>AGE-OUT WORKFLOW:</b> Members over age 30 are marked <b>For Review</b>. Review the record, edit if needed, then archive it. Archived profiles remain searchable and editable for future SK/Barangay reference.</div>
+<div class="scroll"><table class="directory-table"><thead><tr>
+<th>ID</th><th>NAME</th><th>VERIFICATION</th><th>AGE</th><th>BIRTHDAY</th><th>SEX</th><th>CIVIL STATUS</th><th>YOUTH CLASSIFICATION</th><th>YOUTH AGE GROUP</th><th>EMAIL</th><th>CONTACT</th><th>HOME ADDRESS</th><th>EDUCATIONAL ATTAINMENT</th><th>WORK STATUS</th><th>SK VOTER</th><th>VOTED LAST SK ELECTION</th><th>ATTENDED KK ASSEMBLY</th><th>HOW MANY TIMES</th><th>SECTOR</th><th>STATUS</th><th>ACTIONS</th>
+</tr></thead><tbody id="memberRows"></tbody></table></div></div>
+</section>
+
+<section id="events" class="panel">
+<div class="hero"><div><h1>Events & Attendance</h1><div class="muted">Record event title, date, time and participating KK members.</div></div><button class="primary" onclick="openNewEvent()">+ Add Event</button></div>
+<div id="eventCards" class="cards"></div>
+<div class="card" style="margin-top:14px"><h3>How attendance works</h3><p class="muted">Create an event, then select attendees from the KK registry. Each attendance entry is credited to that member's participation history for monthly and yearly monitoring.</p></div>
+</section>
+
+<section id="activity" class="panel">
+<div class="hero"><div><h1>Participation Monitor</h1><div class="muted">Monitor engagement by month/year. Counts are factual attendance records, not performance ratings.</div></div><select id="period" style="width:180px" onchange="renderRanking()"><option value="all">All Recorded</option><option value="2026">Year 2026</option><option value="2026-09">September 2026</option><option value="2026-10">October 2026</option></select></div>
+<div class="grid"><div class="card"><h3>Participation Count</h3><table><thead><tr><th>Member</th><th>Sector</th><th>Events Attended</th><th>Participation</th></tr></thead><tbody id="rankRows"></tbody></table></div>
+<div class="card"><h3>Member Activity History</h3><div id="activityHistory" class="muted">Select a member from the table to view event history.</div></div></div>
+</section>
+
+
+<section id="demo" class="panel">
+<div class="hero"><div><h1>KK Demographic Analytics</h1>
+<div class="muted">Automatic counts based only on encoded answers from the official KK Survey Questionnaire.</div></div>
+<select id="demoSector" style="width:180px" onchange="renderDemographics()"><option value="">All Sectors</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select></div>
+<div class="cards">
+<div class="card"><div class="label">Male</div><div class="metric" id="dMale">0</div></div>
+<div class="card"><div class="label">Female</div><div class="metric" id="dFemale">0</div></div>
+<div class="card"><div class="label">In-School Youth</div><div class="metric" id="dISY">0</div></div>
+<div class="card"><div class="label">Out-of-School Youth</div><div class="metric" id="dOSY">0</div></div>
+<div class="card"><div class="label">Working Youth</div><div class="metric" id="dWY">0</div></div>
+<div class="card"><div class="label">Youth w/ Specific Needs</div><div class="metric" id="dYSN">0</div></div>
+<div class="card"><div class="label">Employed</div><div class="metric" id="dEmp">0</div></div>
+<div class="card"><div class="label">Unemployed</div><div class="metric" id="dUnemp">0</div></div>
+</div>
+<div class="grid">
+<div class="card"><h3>Age Groups</h3><table><tr><td>Child Youth (15–17)</td><td id="dChild"></td></tr><tr><td>Core Youth (18–24)</td><td id="dCore"></td></tr><tr><td>Young Adult (25–30)</td><td id="dYoung"></td></tr><tr><td>For age-out review</td><td id="dOld"></td></tr></table></div>
+<div class="card"><h3>Other Survey Indicators</h3><table><tr><td>Registered SK Voters</td><td id="dSK"></td></tr><tr><td>Registered National Voters</td><td id="dNat"></td></tr><tr><td>Attended KK Assembly</td><td id="dAsm"></td></tr><tr><td>With mobile number</td><td id="dMobile"></td></tr></table></div>
+</div>
+<div class="card" style="margin-top:14px"><h3>Privacy / Data Rule</h3><p class="muted">YouthLink will never infer LGBT/SOGIESC identity from sex assigned at birth, name, appearance, or other profile fields. If the SK later uses a lawful, voluntary and privacy-reviewed SOGIESC field, it can be added as a separate optional survey item and counted only from self-reported responses.</p></div>
+</section>
+
+<section id="sms" class="panel">
+<div class="hero"><div><h1>SMS Center</h1><div class="muted">Use registered mobile numbers for official advisories and program notices.</div></div></div>
+<div class="grid"><div class="card"><div class="grid2">
+<div class="field"><label>Recipient Group</label><select id="smsGroup"><option>All Active KK Members</option><option>ALL SECTORS</option><option>Sector 1</option><option>Sector 2</option><option>Sector 3</option><option>Sector 4</option><option>Sector 5</option><option>Sector 6</option><option>Sector 7</option><option>Selected Event Attendees</option><option>SPECIFIC KK MEMBER</option></select></div>
+<div class="field"><label>Notice Type</label><select><option>Official Advisory</option><option>Meeting Notice</option><option>Schedule Change</option><option>Reminder</option><option>Event Notice</option></select></div>
+<div class="field full" id="specificRecipientBox" style="display:none">
+<label>SEARCH SPECIFIC RECIPIENT</label>
+<input id="specificRecipientSearch" type="text" placeholder="SEARCH NAME, YOUTHLINK ID OR MOBILE NUMBER..." autocomplete="off" oninput="searchSpecificRecipient()">
+<div id="specificRecipientResults" class="card" style="margin-top:8px;max-height:220px;overflow:auto;padding:6px"></div>
+<div id="selectedRecipientCard" class="notice" style="display:none"></div>
+</div>
+<div class="field full"><label>Message</label><textarea id="smsMessage" rows="9">OFFICIAL ADVISORY:
+
+Please be informed that...
+
+-SK Nagsimbaanan, Bacnotan, La Union
+
+This is an automated text message.</textarea></div></div>
+<button class="primary" id="smsSendBtn" onclick="reviewAndSendSMS()">Review & Send</button><div id="smsSendStatus" class="muted" style="margin-top:10px"></div></div>
+<div class="card"><h3>Production Security</h3><div class="notice">Semaphore API key must stay in Vercel Environment Variables. Personal data and credentials must not be placed in public GitHub code.</div><p class="muted">Production version will validate numbers, show recipient count, SMS segments, delivery logs and communication history.</p></div></div>
+</section>
+
+<section id="exports" class="panel">
+<div class="hero"><div><h1>Reports & Export Center</h1><div class="muted">SK Nagsimbaanan official profiling template, Excel import, editable XLSX and print/PDF reports.</div></div></div>
+<div class="notice"><b>OFFICIAL SYSTEM HEADER:</b> KATIPUNAN NG KABATAAN DIRECTORIES • SK NAGSIMBAANAN. DILG Annex wording has been removed from system-generated reports.</div>
+<div class="cards">
+<div class="card"><h3>SK Nagsimbaanan — Editable Excel</h3><p class="muted">Native .xlsx export with formatted headers and Excel dropdown choices for categorical fields.</p><button class="primary" onclick="exportSKExcel()">Export Editable .XLSX</button></div>
+<div class="card"><h3>SK Nagsimbaanan — PDF</h3><p class="muted">Landscape, print-ready KATIPUNAN NG KABATAAN DIRECTORIES report.</p><button class="primary" onclick="printSKReport()">Generate PDF / Print</button></div>
+<div class="card"><h3>Import Existing Excel</h3><p class="muted">Choose an existing KK profiling .xlsx/.xls file. YouthLink previews and maps standard profiling columns before adding records.</p><input id="excelImport" type="file" accept=".xlsx,.xls" style="margin-bottom:8px"><button class="primary" onclick="importExcelFile()">Preview & Import Excel</button><div id="importStatus" class="muted" style="margin-top:8px"></div></div>
+<div class="card"><h3>Attendance Report</h3><p class="muted">Event attendance and participation records.</p><button class="ghost" onclick="downloadAttendance()">Export Attendance</button></div><div class="card"><h3>Ready-to-Print Attendance Sheet</h3><p class="muted">Create the official SK Nagsimbaanan attendance sheet. The system automatically creates one page for every 14 numbered entries.</p><button class="primary" onclick="attendanceSheetDlg.showModal()">Create Attendance Sheet</button></div>
+<div class="card"><h3>Filters</h3><p class="muted">Production version: sector, age group, active/archived, event, month, year and selected records.</p></div>
+</div></section>
+
+</div></main></div>
+
+<dialog id="memberDlg"><div class="modalhead"><b>Encode KK Profiling Form</b><button class="ghost" onclick="memberDlg.close()">✕</button></div><div class="modalbody">
+<div class="grid2">
+<div class="field"><label>First Name</label><input id="fFirst" placeholder="First Name"></div>
+<div class="field"><label>Middle Name</label><input id="fMiddle" placeholder="Middle Name (optional)"></div>
+<div class="field"><label>Last Name</label><input id="fLast" placeholder="Last Name"></div>
+<div class="field"><label>Suffix</label><input id="fSuffix" placeholder="Jr., Sr., III (optional)"></div>
+<div class="field"><label>Date of Birth</label><input id="fDob" type="date"></div><div class="field"><label>Sector</label><select id="fSector"><option value="">To Verify / Not Yet Assigned</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select></div>
+<div class="field"><label>Sex Assigned at Birth</label><select id="fSex"><option>Male</option><option>Female</option></select></div><div class="field"><label>Civil Status</label><select id="fCivil"><option>Single</option><option>Married</option><option>Widowed</option><option>Divorced</option><option>Separated</option><option>Annulled</option><option>Unknown</option><option>Live-in</option></select></div>
+<div class="field"><label>Youth Classification</label><select id="fClass"><option>ISY - In-School Youth</option><option>OSY - Out-of-School Youth</option><option>WY - Working Youth</option><option>YSN - Youth with Specific Needs</option></select></div><div class="field"><label>Youth with Specific Needs - Indicator</label><select id="fNeeds"><option value="">None / Not indicated</option><option>Indigenous People</option><option>Children in Conflict with the Law</option><option>Person with Disability</option></select></div>
+<div class="field"><label>Email Address</label><input id="fEmail" type="email"></div><div class="field"><label>Contact Number</label><input id="fMobile" placeholder="09XXXXXXXXX"></div>
+<div class="field full"><label>Home Address</label><input id="fAddress" value="Nagsimbaanan, Bacnotan, La Union"></div>
+<div class="field"><label>Education Background</label><select id="fEdu"><option>Elementary Level</option><option>Elementary Graduate</option><option>High School Level</option><option>High School Graduate</option><option>Vocational Graduate</option><option>College Level</option><option>College Graduate</option><option>Masters Level</option><option>Masters Graduate</option><option>Doctorate Level</option><option>Doctorate Graduate</option></select></div><div class="field"><label>Work Status</label><select id="fWork"><option>Employed</option><option>Unemployed</option><option>Self-Employed</option><option>Currently looking for a job</option><option>Not interested looking for a job</option></select></div>
+<div class="field"><label>Registered SK Voter?</label><select id="fSK"><option>Yes</option><option>No</option></select></div><div class="field"><label>Registered National Voter?</label><select id="fNat"><option>Yes</option><option>No</option></select></div>
+<div class="field"><label>Voted in last SK election?</label><select id="fVote"><option>Yes</option><option>No</option></select></div><div class="field"><label>Attended a KK Assembly?</label><select id="fAsm"><option>Yes</option><option>No</option></select></div>
+<div class="field"><label>House-to-House Verification</label><select id="fVerify"><option value="UNVERIFIED">UNVERIFIED — Existing baseline</option><option value="VERIFIED">VERIFIED — Confirmed house-to-house</option><option value="NEEDS_REVIEW">NEEDS REVIEW</option></select></div><div class="field"><label>Data Quality / Verification Notes</label><input id="fDataNotes" placeholder="Corrections, source notes, or follow-up needed"></div>
+<div class="field"><label>If yes, how many times?</label><select id="fTimes"><option value=""></option><option>1-2 Times</option><option>3-4 Times</option><option>5 and Above</option></select></div><div class="field"><label>If no, why?</label><select id="fWhy"><option value=""></option><option>There was no KK Assembly Meeting</option><option>Not Interested to attend</option></select></div>
+</div></div><div class="modalfoot"><button class="ghost" onclick="memberDlg.close()">Cancel</button><button class="primary" onclick="saveMember()">Save Profile</button></div></dialog>
+
+<dialog id="attendanceSheetDlg">
+<div class="modalhead"><div><b>CREATE ATTENDANCE SHEET</b><div class="muted">SK Nagsimbaanan ready-to-print template</div></div><button class="ghost" onclick="attendanceSheetDlg.close()">✕</button></div>
+<div class="modalbody"><div class="formgrid">
+<div class="field full"><label>EVENT / ACTIVITY NAME</label><input id="asEvent" type="text" placeholder="ENTER EVENT OR ACTIVITY NAME"></div>
+<div class="field"><label>DATE (MM / DD / YYYY)</label>
+<div class="segmented">
+<input id="asMonth" class="auto-next" inputmode="numeric" maxlength="2" placeholder="MM" data-next="asDay">
+<span>/</span>
+<input id="asDay" class="auto-next" inputmode="numeric" maxlength="2" placeholder="DD" data-next="asYear">
+<span>/</span>
+<input id="asYear" class="auto-next" inputmode="numeric" maxlength="4" placeholder="YYYY" data-next="asHour">
+</div></div>
+<div class="field"><label>TIME</label>
+<div class="segmented">
+<input id="asHour" class="auto-next" inputmode="numeric" maxlength="2" placeholder="HH" data-next="asMinute">
+<span>:</span>
+<input id="asMinute" class="auto-next" inputmode="numeric" maxlength="2" placeholder="MM" data-next="asAmPm">
+<select id="asAmPm" data-next="asVenue"><option>AM</option><option>PM</option></select>
+</div></div>
+<div class="field"><label>VENUE</label><input id="asVenue" type="text" value="BARANGAY NAGSIMBAANAN"></div>
+<div class="field"><label>NUMBER OF ATTENDEES / ENTRIES</label>
+<input id="asTotalEntries" inputmode="numeric" type="number" min="1" max="500" step="1" value="14" placeholder="EX. 35">
+</div>
+<div class="field"><label>ROWS PER PAGE</label>
+<input value="14 ENTRIES PER PAGE" disabled>
+</div>
+</div>
+<div class="notice">The system automatically creates pages with a maximum of <b>14 numbered entries per page</b>. Numbering continues on the next page. Example: 35 entries = Page 1 (1–14), Page 2 (15–28), Page 3 (29–35).</div>
+</div>
+<div class="modalfoot"><button class="ghost" onclick="attendanceSheetDlg.close()">Cancel</button><button class="primary" onclick="generateAttendanceSheet()">Generate / Print</button></div>
+</dialog>
+<dialog id="eventDetailsDlg"><div class="modalhead"><div><b id="detailTitle">Event Details</b><div class="muted" id="detailMeta"></div></div><button class="ghost" onclick="eventDetailsDlg.close()">✕</button></div>
+<div class="modalbody">
+<div class="toolbar"><input id="detailSearch" type="text" placeholder="SEARCH ATTENDEE NAME OR YOUTHLINK ID..." oninput="filterEventDetails()"></div>
+<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b>ATTENDEES</b><span class="badge ok" id="detailCount">0 RECORDED</span></div>
+<div id="detailAttendees"></div></div>
+</div><div class="modalfoot"><button class="danger" onclick="deleteCurrentEvent()">Delete Event</button><button class="ghost" onclick="printCurrentEventAttendance()">Print Attendance</button><button class="primary" onclick="editCurrentEvent()">Edit Event</button><button class="ghost" onclick="eventDetailsDlg.close()">Close</button></div></dialog>
+
+<dialog id="eventDlg"><div class="modalhead"><b id="eventDlgTitle">Create Event & Attendance</b><button class="ghost" onclick="eventDlg.close()">✕</button></div><div class="modalbody"><div class="grid2">
+<div class="field full"><label>Event Title</label><input id="eTitle" placeholder="e.g. Wildlife Conservation Seminar"></div>
+<div class="field"><label>Date</label><input id="eDate" type="date" value="2026-10-03"></div><div class="field"><label>Time</label><input id="eTime" type="time" value="17:00"></div>
+<div class="field full"><label>Venue</label><input id="eVenue" value="Barangay Nagsimbaanan"></div>
+<div class="field full"><label>Select Attendees</label>
+<input id="attendeeSearch" type="text" placeholder="SEARCH NAME OR YOUTHLINK ID..." oninput="filterAttendees()" autocomplete="off" style="margin-bottom:8px">
+<div id="attendeeChecks" class="card"></div></div>
+</div></div><div class="modalfoot"><button class="ghost" onclick="eventDlg.close()">Cancel</button><button class="primary" id="eventSaveBtn" onclick="saveEvent()">Save Event & Attendance</button></div></dialog>
+
+
+<div id="authGate">
+  <div class="authbox">
+    <img class="authlogo" src="logo.png" alt="Sangguniang Kabataan ng Nagsimbaanan Logo">
+    <div class="authbrand">YouthLink</div>
+    <div class="authoffice">Office of the SK Nagsimbaanan</div>
+    <div class="authsub">Youth Information System</div>
+    <div class="authwelcome">WELCOME TO YOUTHLINK PORTAL</div>
+    <form id="loginForm" onsubmit="loginYouthLink(event)">
+      <label>AUTHORIZED EMAIL</label>
+      <input id="loginEmail" type="email" autocomplete="username" required placeholder="name@example.com">
+      <label>PASSWORD</label>
+      <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="••••••••">
+      <button id="loginBtn" class="primary" type="submit" style="width:100%;margin-top:18px">Sign In</button>
+      <div id="loginError" class="autherr"></div>
+    </form>
+    <div class="muted" style="font-size:12px;margin-top:8px">Authorized SK Nagsimbaanan staff only.</div>
+  </div>
+</div>
+
+<script>
+let members=[];
+let events=[];
+let editingMemberId=null;
+let editingEventId=null;
+let sb=null;
+
+async function api(path, options={}){
+ const r=await fetch(path,{headers:{'Content-Type':'application/json',...(options.headers||{})},...options});
+ const data=await r.json().catch(()=>({}));
+ if(!r.ok) throw new Error(data.error||'Request failed');
+ return data;
+}
+let currentStaff=null;
+
+function showAuth(show=true){
+ const g=document.getElementById('authGate');
+ if(g)g.style.display=show?'flex':'none';
+}
+async function verifyStaff(user){
+ if(!user) return null;
+ const r=await sb.from('staff_profiles').select('full_name,role,active').eq('user_id',user.id).maybeSingle();
+ if(r.error) throw r.error;
+ if(!r.data || !r.data.active) return null;
+ return r.data;
+}
+async function enterYouthLink(session){
+ const staff=await verifyStaff(session?.user);
+ if(!staff){
+   if(session) await sb.auth.signOut();
+   showAuth(true);
+   throw new Error('This account is not authorized for YouthLink.');
+ }
+ currentStaff=staff;
+ document.getElementById('signedInAs').textContent=(staff.full_name||session.user.email)+' • '+String(staff.role||'staff').toUpperCase();
+ showAuth(false);
+ await refreshOnline();
+}
+async function initOnline(){
+ try{
+   const cfg=await api('/api/config');
+   sb=window.supabase.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey);
+   const {data,error}=await sb.auth.getSession();
+   if(error) throw error;
+   if(data.session) await enterYouthLink(data.session);
+   else showAuth(true);
+ }catch(e){
+   console.error(e);
+   showAuth(true);
+   const box=document.getElementById('loginError');
+   if(box) box.textContent=e.message||'Could not connect to YouthLink.';
+ }
+}
+async function loginYouthLink(ev){
+ ev?.preventDefault();
+ const btn=document.getElementById('loginBtn'), err=document.getElementById('loginError');
+ err.textContent=''; btn.disabled=true; btn.textContent='Signing in...';
+ try{
+   const email=document.getElementById('loginEmail').value.trim();
+   const password=document.getElementById('loginPassword').value;
+   const {data,error}=await sb.auth.signInWithPassword({email,password});
+   if(error) throw error;
+   await enterYouthLink(data.session);
+   document.getElementById('loginPassword').value='';
+ }catch(e){ err.textContent=e.message||'Sign in failed.'; }
+ finally{btn.disabled=false;btn.textContent='Sign In';}
+}
+async function logoutYouthLink(){
+ if(sb) await sb.auth.signOut();
+ currentStaff=null; members=[]; events=[]; renderAll(); showAuth(true);
+}
+function mapMember(r){
+ return {dbId:r.id,id:r.youthlink_id||'',first:r.first_name||'',middle:r.middle_name||'',last:r.last_name||'',suffix:r.suffix||'',name:r.full_name||'',dob:r.birth_date||r.date_of_birth||'',sector:String(r.sector||''),sex:r.sex_assigned_at_birth||'',civil:r.civil_status||'',cls:r.youth_classification||'',needs:r.specific_needs_indicator||'',email:r.email||'',mobile:r.contact_number||'',address:r.home_address||'',edu:r.educational_attainment||'',work:r.work_status||'',sk:r.registered_sk_voter||'',nat:r.registered_national_voter||'',vote:r.voted_last_sk_election||'',asm:r.attended_kk_assembly||'',times:r.kk_assembly_times||'',why:r.kk_assembly_no_reason||'',verify:r.verification_status||'UNVERIFIED',verifiedAt:r.verified_at||'',dataNotes:r.data_quality_notes||'',sourceRow:r.source_row||'',archived:!!r.archived,archivedAt:r.archived_at?String(r.archived_at).slice(0,10):''};
+}
+function dbMember(m){
+ return {youthlink_id:m.id,first_name:m.first||'',middle_name:m.middle||'',last_name:m.last||'',suffix:m.suffix||'',full_name:m.name||'',birth_date:m.dob||null,sector:m.sector?String(m.sector):null,sex_assigned_at_birth:m.sex||'',civil_status:m.civil||'',youth_classification:m.cls||'',specific_needs_indicator:m.needs||'',email:m.email||'',contact_number:m.mobile||'',home_address:m.address||'',educational_attainment:m.edu||'',work_status:m.work||'',registered_sk_voter:m.sk||'',registered_national_voter:m.nat||'',voted_last_sk_election:m.vote||'',attended_kk_assembly:m.asm||'',kk_assembly_times:m.times||'',kk_assembly_no_reason:m.why||'',verification_status:m.verify||'UNVERIFIED',verified_at:(m.verify==='VERIFIED'?(m.verifiedAt||new Date().toISOString()):null),data_quality_notes:m.dataNotes||'',archived:!!m.archived,archived_at:m.archived?(m.archivedAt||new Date().toISOString()):null};
+}
+async function refreshOnline(){
+ if(!sb || !currentStaff) return;
+ let q=await sb.from('kk_members').select('*').order('created_at',{ascending:true}); if(q.error)throw q.error;
+ members=(q.data||[]).map(mapMember);
+ q=await sb.from('events').select('*').order('event_date',{ascending:false}); if(q.error)throw q.error; const ev=q.data||[];
+ q=await sb.from('event_attendance').select('*'); if(q.error)throw q.error; const at=q.data||[];
+ const ids=new Map(members.map(m=>[String(m.dbId),m.id]));
+ events=ev.map(e=>({id:e.id,title:e.event_title||'',date:e.event_date||'',time:e.event_time||'',venue:e.venue||'',att:at.filter(x=>String(x.event_id)===String(e.id)).map(x=>ids.get(String(x.member_id))).filter(Boolean)}));
+ renderAll();
+}
+function persistMembers(){}
+function persistEvents(){}
+const today=new Date();
+function age(d){let b=new Date(d+'T00:00:00'),a=today.getFullYear()-b.getFullYear();let m=today.getMonth()-b.getMonth();if(m<0||(m===0&&today.getDate()<b.getDate()))a--;return a}
+function group(a){if(a>=15&&a<=17)return'Child Youth (15-17)';if(a<=24)return'Core Youth (18-24)';if(a<=30)return'Young Adult (25-30)';return'For age-out review'}
+function status(m){if(m.archived)return'Archived';return age(m.dob)>30?'For Review':'Active'}
+function nav(id){document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav div').forEach(x=>x.classList.toggle('active',x.dataset.p===id));document.getElementById('title').textContent={dash:'Dashboard',kk:'KK Profiling',events:'Events & Attendance',activity:'Participation Monitor',demo:'Demographics',sms:'SMS Center',exports:'Reports & Export'}[id];if(id==='activity')renderRanking();window.scrollTo(0,0)}
+document.querySelectorAll('.nav div').forEach(x=>x.onclick=()=>nav(x.dataset.p));
+function renderMembers(){
+ let q=(document.getElementById('search')?.value||'').toLowerCase(),
+     s=document.getElementById('sectorFilter')?.value||'',
+     rf=document.getElementById('recordFilter')?.value||'ACTIVE';
+ let list=members.filter(m=>{
+   let recordOk=rf==='ALL'||(rf==='ARCHIVED'?m.archived:!m.archived);
+   let search=(m.name+' '+m.id+' '+m.sector+' '+(m.mobile||'')+' '+(m.email||'')+' '+(m.address||'')).toLowerCase();
+   return recordOk&&(!s||m.sector===s)&&(!q||search.includes(q));
+ });
+ memberRows.innerHTML=list.map(m=>{
+   let a=age(m.dob),st=status(m);
+   let badge=st==='Active'?'ok':(st==='Archived'?'':'old');
+   return `<tr>
+   <td>${m.id}</td><td><b>${m.name}</b>${m.sourceRow?`<div class="muted" style="font-size:10px">Source row ${m.sourceRow}</div>`:''}</td><td><span class="badge ${m.verify==='VERIFIED'?'ok':(m.verify==='NEEDS_REVIEW'?'old':'warn')}">${m.verify||'UNVERIFIED'}</span></td><td>${a}</td><td>${m.dob}</td><td>${m.sex||''}</td><td>${m.civil||''}</td>
+   <td>${m.cls||''}</td><td>${group(a)}</td><td>${m.email||''}</td><td>${m.mobile||'<span class="badge warn">Missing</span>'}</td>
+   <td>${m.address||''}</td><td>${m.edu||''}</td><td>${m.work||''}</td><td>${m.sk||''}</td><td>${m.vote||''}</td><td>${m.asm||''}</td><td>${m.times||''}</td><td>${m.sector||''}</td>
+   <td><span class="badge ${badge}">${st}</span>${m.archivedAt?`<div class="muted" style="font-size:10px">${m.archivedAt}</div>`:''}</td>
+   <td style="white-space:nowrap"><button class="ghost" onclick="editMember('${m.id}')">Edit</button>
+   ${m.archived?`<button class="ghost" onclick="restoreMember('${m.id}')">Restore</button>`:`<button class="ghost" onclick="archiveMember('${m.id}')">Archive</button>`}</td></tr>`;
+ }).join('');
+}
+function renderDash(){let active=members.filter(m=>!m.archived && status(m)==='Active').length,bo=members.filter(m=>new Date(m.dob+'T00:00:00').getMonth()===today.getMonth()).length,ao=members.filter(m=>!m.archived&&age(m.dob)>30).length;document.getElementById('mActive').textContent=active;document.getElementById('mBirth').textContent=bo;document.getElementById('mVerified').textContent=members.filter(m=>!m.archived&&m.verify==='VERIFIED').length;document.getElementById('mEvents').textContent=events.length;
+let b=members.slice().sort((x,y)=>{function next(m){let d=new Date(today.getFullYear(),new Date(m.dob+'T00:00:00').getMonth(),new Date(m.dob+'T00:00:00').getDate());if(d<today)d.setFullYear(d.getFullYear()+1);return d}return next(x)-next(y)}).slice(0,4);document.getElementById('birthList').innerHTML=b.map(m=>`<p><b>${m.name}</b><br><span class="muted">${new Date(m.dob+'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric'})} • turns ${age(m.dob)+1}</span></p>`).join('');
+let a=members.filter(m=>!m.archived&&status(m)==='For Review');document.getElementById('ageList').innerHTML=a.length?a.map(m=>`<p><b>${m.name}</b> <span class="badge old">Age ${age(m.dob)} • Review</span></p>`).join(''):'<p class="muted">No age-out alerts.</p>'}
+function clearMemberForm(){
+ ['fFirst','fMiddle','fLast','fSuffix','fEmail','fMobile','fDataNotes'].forEach(id=>document.getElementById(id).value='');
+ fDob.value='';fSector.value='';fVerify.value='UNVERIFIED';fAddress.value='Nagsimbaanan, Bacnotan, La Union';
+}
+function openMember(){
+ editingMemberId=null;clearMemberForm();
+ document.querySelector('#memberDlg .modalhead b').textContent='Encode KK Profiling Form';
+ document.querySelector('#memberDlg .modalfoot .primary').textContent='Save Profile';
+ memberDlg.showModal();
+}
+function editMember(id){
+ let m=members.find(x=>x.id===id);if(!m)return;
+ editingMemberId=id;
+ let parts=(m.name||'').replace(',','').split(/\s+/);
+ fFirst.value=m.first||parts[1]||'';fMiddle.value=m.middle||'';fLast.value=m.last||parts[0]||'';fSuffix.value=m.suffix||'';
+ fDob.value=m.dob||'';fSector.value=m.sector||'1';fSex.value=m.sex||'Male';fCivil.value=m.civil||'Single';fClass.value=m.cls||'ISY - In-School Youth';
+ fNeeds.value=m.needs||'';fEmail.value=m.email||'';fMobile.value=m.mobile||'';fAddress.value=m.address||'Nagsimbaanan, Bacnotan, La Union';
+ fEdu.value=m.edu||'High School Level';fWork.value=m.work||'Unemployed';fSK.value=m.sk||'No';fNat.value=m.nat||'No';fVote.value=m.vote||'No';fAsm.value=m.asm||'No';fTimes.value=m.times||'';fWhy.value=m.why||'';fVerify.value=m.verify||'UNVERIFIED';fDataNotes.value=m.dataNotes||'';
+ document.querySelector('#memberDlg .modalhead b').textContent='Edit KK Profile — '+m.id;
+ document.querySelector('#memberDlg .modalfoot .primary').textContent='Save Changes';
+ memberDlg.showModal();
+}
+function saveMember(){
+ let first=fFirst.value.trim(),middle=fMiddle.value.trim(),last=fLast.value.trim(),suffix=fSuffix.value.trim(),dob=fDob.value;
+ if(!first||!last||!dob){alert('First name, last name, and date of birth are required.');return}
+ let name=[last+',',first,middle,suffix].filter(Boolean).join(' ').replace(', ', ', ');
+ let data={first,middle,last,suffix,name,dob,sector:fSector.value,sex:fSex.value,civil:fCivil.value,cls:fClass.value,needs:fNeeds.value,email:fEmail.value,mobile:fMobile.value,address:fAddress.value,edu:fEdu.value,work:fWork.value,sk:fSK.value,nat:fNat.value,vote:fVote.value,asm:fAsm.value,times:fTimes.value,why:fWhy.value,verify:fVerify.value,dataNotes:fDataNotes.value};
+ if(editingMemberId){
+   let i=members.findIndex(x=>x.id===editingMemberId);
+   members[i]={...members[i],...data};
+ }else{
+   let max=Math.max(0,...members.map(m=>Number((m.id.match(/\d+$/)||['0'])[0])));
+   members.push({id:'KK-NAG-'+String(max+1).padStart(4,'0'),...data,archived:false,archivedAt:''});
+ }
+ persistMembers();editingMemberId=null;memberDlg.close();renderAll();nav('kk');
+}
+function archiveMember(id){
+ let m=members.find(x=>x.id===id);if(!m)return;
+ if(!confirm(`Archive ${m.name}? The profile will NOT be deleted. It will remain searchable and editable under Archived records.`))return;
+ m.archived=true;m.archivedAt=new Date().toLocaleDateString('en-CA');persistMembers();renderAll();
+}
+function restoreMember(id){
+ let m=members.find(x=>x.id===id);if(!m)return;
+ m.archived=false;m.archivedAt='';persistMembers();renderAll();
+}
+function renderEvents(){
+ eventCards.innerHTML=events.map(e=>`<div class="card" onclick="showEventDetails('${e.id}')" style="cursor:pointer" title="Click to view attendees">
+ <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><b>${e.title}</b><div style="display:flex;gap:6px"><button class="ghost" style="padding:6px 9px" onclick="event.stopPropagation();editEvent('${e.id}')">Edit</button><button class="danger" style="padding:6px 9px" onclick="event.stopPropagation();deleteEventById('${e.id}')">Delete</button></div></div>
+ <p class="muted">${e.date} • ${e.time||''}<br>${e.venue}</p><div class="metric">${e.att.length}</div><div class="label">Recorded attendees • Click to view names</div></div>`).join('');
+ attendeeChecks.innerHTML=members.filter(m=>!m.archived && status(m)==='Active').map(m=>`<label class="attendee-item" data-search="${(m.name+' '+m.id).toUpperCase()}" style="display:block;padding:7px"><input type="checkbox" class="att" value="${m.id}" style="width:auto"> ${m.name} <span class="muted">(${m.id})</span></label>`).join('')
+}
+function openNewEvent(){
+ editingEventId=null;eTitle.value='';eDate.value='2026-10-03';eTime.value='17:00';eVenue.value='Barangay Nagsimbaanan';
+ document.querySelectorAll('.att').forEach(x=>x.checked=false);
+ document.getElementById('eventDlgTitle').textContent='Create Event & Attendance';document.getElementById('eventSaveBtn').textContent='Save Event & Attendance';eventDlg.showModal();
+}
+function editEvent(id){
+ const e=events.find(x=>String(x.id)===String(id));if(!e)return;
+ editingEventId=e.id;eTitle.value=e.title;eDate.value=e.date;eTime.value=(e.time||'').slice(0,5);eVenue.value=e.venue||'';
+ document.querySelectorAll('.att').forEach(x=>x.checked=e.att.includes(x.value));
+ document.getElementById('eventDlgTitle').textContent='Edit Event & Attendance';document.getElementById('eventSaveBtn').textContent='Save Changes';eventDlg.showModal();
+}
+function editCurrentEvent(){if(!currentDetailEvent)return;const id=currentDetailEvent.id;eventDetailsDlg.close();editEvent(id)}
+async function deleteEventById(id){
+ const e=events.find(x=>String(x.id)===String(id));if(!e||!confirm('Delete event "'+e.title+'" and all attendance records? This cannot be undone.'))return;
+ try{let r=await sb.from('event_attendance').delete().eq('event_id',e.id);if(r.error)throw r.error;r=await sb.from('events').delete().eq('id',e.id);if(r.error)throw r.error;await refreshOnline();}catch(err){alert('Could not delete event: '+err.message)}
+}
+function saveEvent(){if(!eTitle.value.trim()||!eDate.value){alert('Event title and date are required.');return}events.push({id:Date.now(),title:eTitle.value.trim(),date:eDate.value,time:eTime.value,venue:eVenue.value,att:[...document.querySelectorAll('.att:checked')].map(x=>x.value)});persistEvents();eventDlg.close();eTitle.value='';document.querySelectorAll('.att:checked').forEach(x=>x.checked=false);renderAll()}
+function filteredEvents(){let p=period.value;return events.filter(e=>p==='all'||e.date.startsWith(p))}
+function renderRanking(){let ev=filteredEvents();let counts=members.map(m=>({m,c:ev.filter(e=>e.att.includes(m.id)).length})).sort((a,b)=>b.c-a.c||a.m.name.localeCompare(b.m.name));rankRows.innerHTML=counts.map((x,i)=>`<tr onclick="showHistory('${x.m.id}')" style="cursor:pointer"><td><span class="${i===0?'rank1':'rank'}">${i+1}.</span> ${x.m.name}</td><td>${x.m.sector}</td><td><b>${x.c}</b></td><td>${ev.length?Math.round(x.c/ev.length*100):0}% of recorded events</td></tr>`).join('')}
+function showHistory(id){let m=members.find(x=>x.id===id),ev=filteredEvents().filter(e=>e.att.includes(id));activityHistory.innerHTML=`<h3>${m.name}</h3>`+(ev.length?ev.map(e=>`<p><b>${e.title}</b><br><span class="muted">${e.date} • ${e.time}</span></p>`).join(''):'<p class="muted">No attendance recorded in selected period.</p>')}
+function csvEscape(v){return '"'+String(v??'').replaceAll('"','""')+'"'}
+function download(name,content,type='text/csv'){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();URL.revokeObjectURL(a.href)}
+
+function safeUpper(v){return String(v??'').trim().toUpperCase()}
+function memberExportRows(){
+ return members.map(m=>{
+   let d=new Date(m.dob+'T00:00:00');
+   return ['REGION I','LA UNION','BACNOTAN','NAGSIMBAANAN',m.name.toUpperCase(),age(m.dob),
+   d.toLocaleString('en-US',{month:'long'}).toUpperCase(),d.getDate(),d.getFullYear(),
+   safeUpper(m.sex),safeUpper(m.civil),safeUpper(m.cls),safeUpper(group(age(m.dob))),
+   safeUpper(m.email),safeUpper(m.mobile),safeUpper(m.address),safeUpper(m.edu),safeUpper(m.work),
+   safeUpper(m.sk),safeUpper(m.vote),safeUpper(m.asm),safeUpper(m.times)];
+ });
+}
+async function exportSKExcel(){
+ if(typeof ExcelJS==='undefined'){alert('Excel library did not load. Open YouthLink while connected to the internet, then try again.');return}
+ const wb=new ExcelJS.Workbook();
+ const ws=wb.addWorksheet('KK DIRECTORIES',{pageSetup:{orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0,paperSize:9}});
+ const headers=['REGION','PROVINCE','CITY/MUNICIPALITY','BARANGAY','NAME','AGE','BIRTHDAY - MONTH','BIRTHDAY - DAY','BIRTHDAY - YEAR','SEX ASSIGNED AT BIRTH','CIVIL STATUS','YOUTH CLASSIFICATION','YOUTH AGE GROUP','EMAIL ADDRESS','CONTACT NUMBER','HOME ADDRESS','HIGHEST EDUCATIONAL ATTAINMENT','WORK STATUS','REGISTERED SK VOTER? Y/N','VOTED LAST SK ELECTION? Y/N','ATTENDED A KK ASSEMBLY? Y/N','IF YES, HOW MANY TIMES?'];
+ ws.mergeCells('A1:V1'); let t=ws.getCell('A1'); t.value='KATIPUNAN NG KABATAAN DIRECTORIES'; t.font={bold:true,size:18}; t.alignment={horizontal:'center',vertical:'middle'}; ws.getRow(1).height=28;
+ ws.mergeCells('A2:V2'); let st=ws.getCell('A2'); st.value='SK NAGSIMBAANAN • BACNOTAN, LA UNION'; st.font={bold:true,size:11}; st.alignment={horizontal:'center'};
+ ws.getRow(4).values=headers; ws.getRow(4).height=48;
+ ws.getRow(4).eachCell(c=>{c.font={bold:true,size:9};c.alignment={horizontal:'center',vertical:'middle',wrapText:true};c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFFFFF00'}};c.border={top:{style:'thin'},left:{style:'thin'},bottom:{style:'thin'},right:{style:'thin'}}});
+ memberExportRows().forEach(r=>ws.addRow(r));
+ ws.eachRow((row,n)=>{if(n>=5)row.eachCell(c=>{c.font={bold:false,size:9};c.alignment={vertical:'middle',wrapText:true};c.border={top:{style:'thin'},left:{style:'thin'},bottom:{style:'thin'},right:{style:'thin'}}})});
+ ws.columns.forEach((c,i)=>c.width=[12,12,16,15,42,8,14,10,12,18,15,22,22,28,18,30,25,22,18,20,22,20][i]||15);
+ ws.views=[{state:'frozen',ySplit:4}]; ws.autoFilter={from:'A4',to:'V4'};
+ const last=Math.max(300,ws.rowCount+100);
+ const list=(col,formula)=>{for(let r=5;r<=last;r++)ws.getCell(`${col}${r}`).dataValidation={type:'list',allowBlank:true,formulae:[`"${formula}"`]};};
+ list('J','MALE,FEMALE'); list('K','SINGLE,MARRIED,WIDOWED,DIVORCED,SEPARATED,ANNULLED,UNKNOWN,LIVE-IN');
+ list('L','ISY - IN-SCHOOL YOUTH,OSY - OUT-OF-SCHOOL YOUTH,WY - WORKING YOUTH,YSN - YOUTH WITH SPECIFIC NEEDS');
+ list('M','CHILD YOUTH (15-17),CORE YOUTH (18-24),YOUNG ADULT (25-30),FOR AGE-OUT REVIEW');
+ list('R','EMPLOYED,UNEMPLOYED,SELF-EMPLOYED,CURRENTLY LOOKING FOR A JOB,NOT INTERESTED LOOKING FOR A JOB');
+ list('S','YES,NO'); list('T','YES,NO'); list('U','YES,NO'); list('V','1-2 TIMES,3-4 TIMES,5 AND ABOVE');
+ const buf=await wb.xlsx.writeBuffer(); download('SK_Nagsimbaanan_KK_Directories.xlsx',buf,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+}
+function printSKReport(){
+ let h=['REGION','PROVINCE','CITY / MUNICIPALITY','BARANGAY','NAME','AGE','BIRTHDAY','SEX ASSIGNED AT BIRTH','CIVIL STATUS','YOUTH CLASSIFICATION','YOUTH AGE GROUP','EMAIL','CONTACT','HOME ADDRESS','EDUCATIONAL ATTAINMENT','WORK STATUS','SK VOTER','VOTED LAST SK ELECTION','ATTENDED KK ASSEMBLY','HOW MANY TIMES'];
+ let rows=members.map(m=>{let d=new Date(m.dob+'T00:00:00');return ['REGION I','LA UNION','BACNOTAN','NAGSIMBAANAN',m.name.toUpperCase(),age(m.dob),d.toLocaleString('en-US',{month:'long'}).toUpperCase()+' '+d.getDate()+', '+d.getFullYear(),m.sex,m.civil,m.cls,group(age(m.dob)),m.email||'',m.mobile||'',m.address,m.edu,m.work,m.sk,m.vote,m.asm,m.times||'']});
+ let w=window.open('','_blank'); w.document.write(`<html><head><title>SK Nagsimbaanan - KK Directories</title><style>@page{size:legal landscape;margin:6mm}body{font-family:Arial}h2,h4{text-align:center;margin:4px}table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:6px}th,td{border:1px solid #222;padding:3px 2px;text-align:center;word-break:break-word}th{font-weight:700;height:42px}.name{text-align:left;font-weight:400}</style></head><body><h2>KATIPUNAN NG KABATAAN DIRECTORIES</h2><h4>SK NAGSIMBAANAN • BACNOTAN, LA UNION</h4><table><colgroup>
+${h.map((_,i)=>`<col style="width:${i===4?'10%':(100-10)/(h.length-1)+'%'}">`).join('')}
+</colgroup><tr>${h.map(x=>'<th>'+x+'</th>').join('')}</tr>${rows.map(r=>'<tr>'+r.map((v,i)=>'<td class="'+(i===4?'name':'')+'">'+safeUpper(v)+'</td>').join('')+'</tr>').join('')}</table></body></html>`);w.document.close();w.print();
+}
+function normalizeHeader(s){return safeUpper(s).replace(/[^A-Z0-9]/g,'')}
+function excelDateToISO(v){
+ if(v instanceof Date && !isNaN(v))return v.toISOString().slice(0,10);
+ if(typeof v==='number' && typeof XLSX!=='undefined'){let d=XLSX.SSF.parse_date_code(v);if(d)return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;}
+ let d=new Date(v); return isNaN(d)?'':d.toISOString().slice(0,10);
+}
+async function importExcelFile(){
+ let f=document.getElementById('excelImport').files[0]; if(!f){alert('Choose an Excel file first.');return}
+ if(typeof XLSX==='undefined'){alert('Excel import library did not load. Open YouthLink while connected to the internet.');return}
+ let data=await f.arrayBuffer(), wb=XLSX.read(data,{type:'array',cellDates:true}), ws=wb.Sheets[wb.SheetNames[0]];
+ let raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+ let hi=raw.findIndex(r=>r.some(v=>['NAME','FIRST NAME','LAST NAME'].includes(safeUpper(v))));
+ if(hi<0){document.getElementById('importStatus').textContent='Could not detect the profiling header row.';return}
+ let heads=raw[hi].map(normalizeHeader), idx=(...names)=>{for(let n of names){let i=heads.indexOf(normalizeHeader(n));if(i>=0)return i}return -1};
+ let ni=idx('NAME'), fi=idx('FIRST NAME'), mi=idx('MIDDLE NAME'), li=idx('LAST NAME'), si=idx('SUFFIX'), sexi=idx('SEX ASSIGNED AT BIRTH','SEX'), ci=idx('CIVIL STATUS'), cli=idx('YOUTH CLASSIFICATION'), mobi=idx('CONTACT NUMBER','CONTACT #'), emi=idx('EMAIL ADDRESS'), addi=idx('HOME ADDRESS'), edui=idx('HIGHEST EDUCATIONAL ATTAINMENT','EDUCATIONAL BACKGROUND'), wi=idx('WORK STATUS'), ski=idx('REGISTERED SK VOTER? Y/N','REGISTERED SK VOTER'), vi=idx('VOTED LAST SK ELECTION? Y/N','DID YOU VOTE LAST SK ELECTION?'), ai=idx('ATTENDED A KK ASSEMBLY? Y/N','HAVE YOU ALREADY ATTENDED A KK ASSEMBLY?'), ti=idx('IF YES, HOW MANY TIMES?');
+ let bmi=idx('BIRTHDAY - MONTH','MONTH'), bdi=idx('BIRTHDAY - DAY','DAY'), byi=idx('BIRTHDAY - YEAR','YEAR'), bdate=idx('BIRTHDAY','DATE OF BIRTH'), sec=idx('SECTOR','PUROK');
+ let added=0, skipped=0;
+ for(let r of raw.slice(hi+1)){
+   if(!r.some(v=>String(v).trim()))continue;
+   let first=fi>=0?safeUpper(r[fi]):'', middle=mi>=0?safeUpper(r[mi]):'', last=li>=0?safeUpper(r[li]):'', suffix=si>=0?safeUpper(r[si]):'';
+   let name=ni>=0?safeUpper(r[ni]):[last+',',first,middle,suffix].filter(Boolean).join(' ');
+   if(!name){skipped++;continue}
+   let dob='';
+   if(bdate>=0)dob=excelDateToISO(r[bdate]);
+   else if(byi>=0&&bmi>=0&&bdi>=0){let mv=r[bmi], month=isNaN(Number(mv))?new Date(Date.parse(String(mv)+' 1, 2000')).getMonth()+1:Number(mv); if(month)dob=`${r[byi]}-${String(month).padStart(2,'0')}-${String(r[bdi]).padStart(2,'0')}`;}
+   if(!dob){skipped++;continue}
+   let duplicate=members.some(m=>safeUpper(m.name)===name && m.dob===dob); if(duplicate){skipped++;continue}
+   let id='KK-NAG-'+String(members.length+1).padStart(4,'0');
+   members.push({id,first,middle,last,suffix,name,dob,sector:sec>=0?String(r[sec]||''):'',sex:sexi>=0?safeUpper(r[sexi]):'',civil:ci>=0?safeUpper(r[ci]):'',cls:cli>=0?safeUpper(r[cli]):'',needs:'',email:emi>=0?safeUpper(r[emi]):'',mobile:mobi>=0?String(r[mobi]).trim():'',address:addi>=0?safeUpper(r[addi]):'NAGSIMBAANAN, BACNOTAN, LA UNION',edu:edui>=0?safeUpper(r[edui]):'',work:wi>=0?safeUpper(r[wi]):'',sk:ski>=0?safeUpper(r[ski]):'',nat:'',vote:vi>=0?safeUpper(r[vi]):'',asm:ai>=0?safeUpper(r[ai]):'',times:ti>=0?safeUpper(r[ti]):'',why:''}); added++;
+ }
+ renderAll(); document.getElementById('importStatus').innerHTML=`<b>${added}</b> record(s) imported; <b>${skipped}</b> skipped/duplicate/incomplete.`;
+}
+function downloadAttendance(){let h=['Event','Date','Time','Venue','YouthLink ID','Name','Sector'];let rows=[];events.forEach(e=>e.att.forEach(id=>{let m=members.find(x=>x.id===id);if(m)rows.push([e.title,e.date,e.time,e.venue,m.id,m.name,m.sector])}));download('YouthLink_Attendance.csv',[h,...rows].map(r=>r.map(csvEscape).join(',')).join('\n'))}
+function printReport(){let w=window.open('','_blank');w.document.write(`<html><head><title>YouthLink KK Report</title><style>body{font-family:Arial;font-size:10px}h2{text-align:center}table{width:100%;border-collapse:collapse}th,td{border:1px solid #555;padding:4px} @page{size:landscape}</style>
+</head><body><h2>KATIPUNAN KABATAAN DIRECTORIES<br>Barangay Nagsimbaanan, Bacnotan, La Union</h2><table><tr><th>ID</th><th>Name</th><th>Age</th><th>Birthday</th><th>Sector</th><th>Age Group</th><th>Contact</th><th>Status</th></tr>${members.map(m=>`<tr><td>${m.id}</td><td>${m.name}</td><td>${age(m.dob)}</td><td>${m.dob}</td><td>${m.sector}</td><td>${group(age(m.dob))}</td><td>${m.mobile}</td><td>${status(m)}</td></tr>`).join('')}</table></body></html>`);w.document.close();w.print()}
+
+function renderDemographics(){
+ let s=document.getElementById('demoSector')?.value||'';
+ let x=members.filter(m=>!s||m.sector===s);
+ const c=(fn)=>x.filter(fn).length;
+ document.getElementById('dMale').textContent=c(m=>safeUpper(m.sex)==='MALE');
+ document.getElementById('dFemale').textContent=c(m=>safeUpper(m.sex)==='FEMALE');
+ document.getElementById('dISY').textContent=c(m=>m.cls.startsWith('ISY'));
+ document.getElementById('dOSY').textContent=c(m=>m.cls.startsWith('OSY'));
+ document.getElementById('dWY').textContent=c(m=>m.cls.startsWith('WY'));
+ document.getElementById('dYSN').textContent=c(m=>m.cls.startsWith('YSN') || !!m.needs);
+ document.getElementById('dEmp').textContent=c(m=>safeUpper(m.work)==='EMPLOYED');
+ document.getElementById('dUnemp').textContent=c(m=>safeUpper(m.work)==='UNEMPLOYED');
+ document.getElementById('dChild').textContent=c(m=>age(m.dob)>=15&&age(m.dob)<=17);
+ document.getElementById('dCore').textContent=c(m=>age(m.dob)>=18&&age(m.dob)<=24);
+ document.getElementById('dYoung').textContent=c(m=>age(m.dob)>=25&&age(m.dob)<=30);
+ document.getElementById('dOld').textContent=c(m=>age(m.dob)>30);
+ document.getElementById('dSK').textContent=c(m=>safeUpper(m.sk)==='YES');
+ document.getElementById('dNat').textContent=c(m=>safeUpper(m.nat)==='YES');
+ document.getElementById('dAsm').textContent=c(m=>safeUpper(m.asm)==='YES');
+ document.getElementById('dMobile').textContent=c(m=>!!m.mobile);
+}
+
+function renderAll(){renderMembers();renderDash();renderEvents();renderRanking();renderDemographics()}
+initOnline();
+
+// YouthLink form standardization:
+// Typed text is automatically converted to uppercase, so staff do not need Caps Lock.
+document.addEventListener('input', function(e){
+  if((e.target.tagName==='INPUT' && !['date','time','checkbox','radio','number'].includes(e.target.type)) || e.target.tagName==='TEXTAREA'){
+    let start=e.target.selectionStart, end=e.target.selectionEnd;
+    e.target.value=e.target.value.toUpperCase();
+    try{e.target.setSelectionRange(start,end)}catch(_){}
+  }
+});
+
+function filterAttendees(){
+ let q=(document.getElementById('attendeeSearch')?.value||'').trim().toUpperCase();
+ document.querySelectorAll('.attendee-item').forEach(el=>{
+   el.style.display=(!q || el.dataset.search.includes(q))?'block':'none';
+ });
+}
+
+// Enter/Done navigation for data-entry forms.
+// On text/email/tel/date/time/select fields, pressing Enter moves to the next enabled field.
+// Textareas keep normal Enter behavior.
+document.addEventListener('keydown', function(e){
+ if(e.key !== 'Enter') return;
+ let el=e.target;
+ if(el.tagName==='TEXTAREA' || el.type==='checkbox' || el.type==='radio' || el.tagName==='BUTTON') return;
+ if(!el.matches('input,select')) return;
+ let scope=el.closest('dialog') || el.closest('form') || document;
+ let fields=[...scope.querySelectorAll('input,select,textarea,button')].filter(x=>{
+   if(x.disabled || x.type==='hidden') return false;
+   if(x.offsetParent===null) return false;
+   if(x.type==='checkbox' || x.type==='radio') return false;
+   return true;
+ });
+ let i=fields.indexOf(el);
+ if(i>=0 && i<fields.length-1){
+   e.preventDefault();
+   let next=fields[i+1];
+   next.focus();
+   if(next.select) try{next.select()}catch(_){}
+ }
+});
+
+// Better mobile keyboard navigation hints.
+document.querySelectorAll('input:not([type=checkbox]):not([type=radio]), select').forEach((el,i,arr)=>{
+ el.setAttribute('enterkeyhint', i===arr.length-1 ? 'done' : 'next');
+});
+
+let currentDetailEvent=null;
+function showEventDetails(id){
+ currentDetailEvent=events.find(e=>String(e.id)===String(id));
+ if(!currentDetailEvent) return;
+ document.getElementById('detailTitle').textContent=currentDetailEvent.title.toUpperCase();
+ document.getElementById('detailMeta').textContent=currentDetailEvent.date+' • '+currentDetailEvent.time+' • '+currentDetailEvent.venue;
+ document.getElementById('detailSearch').value='';
+ renderEventDetailNames();
+ eventDetailsDlg.showModal();
+}
+function renderEventDetailNames(){
+ if(!currentDetailEvent)return;
+ let q=(document.getElementById('detailSearch')?.value||'').trim().toUpperCase();
+ let people=currentDetailEvent.att.map(id=>members.find(m=>m.id===id)).filter(Boolean)
+   .filter(m=>!q||(m.name+' '+m.id+' '+m.sector).toUpperCase().includes(q));
+ document.getElementById('detailCount').textContent=currentDetailEvent.att.length+' RECORDED';
+ document.getElementById('detailAttendees').innerHTML=people.length?people.map((m,i)=>`
+ <div class="event-person" style="display:grid;grid-template-columns:38px 1fr auto;gap:10px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--line)">
+   <b>${i+1}</b><div><b>${m.name}</b><div class="muted">${m.id} • SECTOR ${m.sector}</div></div><div style="display:flex;gap:6px;align-items:center"><span class="badge ok">ATTENDED</span><button class="danger" style="padding:6px 8px" onclick="event.stopPropagation();removeAttendance('${m.id}')">Remove</button></div>
+ </div>`).join(''):'<p class="muted">No matching attendee found.</p>';
+}
+function filterEventDetails(){renderEventDetailNames()}
+function removeAttendance(memberId){
+ if(!currentDetailEvent)return;
+ const m=members.find(x=>x.id===memberId);
+ if(!confirm('Remove '+(m?m.name:'this member')+' from this event attendance?'))return;
+ currentDetailEvent.att=currentDetailEvent.att.filter(id=>id!==memberId);
+ persistEvents(); renderEventDetailNames(); renderAll();
+}
+function deleteCurrentEvent(){
+ if(!currentDetailEvent)return;
+ if(!confirm('Delete event "'+currentDetailEvent.title+'" and all of its attendance records? This cannot be undone.'))return;
+ events=events.filter(e=>String(e.id)!==String(currentDetailEvent.id));
+ persistEvents(); currentDetailEvent=null; eventDetailsDlg.close(); renderAll();
+}
+
+let selectedSpecificRecipient=null;
+function updateSpecificRecipientMode(){
+ let isSpecific=document.getElementById('smsGroup')?.value==='SPECIFIC KK MEMBER';
+ let box=document.getElementById('specificRecipientBox');
+ if(box)box.style.display=isSpecific?'block':'none';
+ if(isSpecific){
+   selectedSpecificRecipient=null;
+   document.getElementById('specificRecipientSearch').value='';
+   document.getElementById('specificRecipientResults').innerHTML='<div class="muted" style="padding:8px">TYPE A NAME, YOUTHLINK ID OR MOBILE NUMBER.</div>';
+   document.getElementById('selectedRecipientCard').style.display='none';
+ }
+}
+document.getElementById('smsGroup')?.addEventListener('change',updateSpecificRecipientMode);
+
+function searchSpecificRecipient(){
+ let q=(document.getElementById('specificRecipientSearch')?.value||'').trim().toUpperCase();
+ let box=document.getElementById('specificRecipientResults');
+ if(!q){box.innerHTML='<div class="muted" style="padding:8px">TYPE A NAME, YOUTHLINK ID OR MOBILE NUMBER.</div>';return}
+ let found=members.filter(m=>status(m)==='Active' && (m.name+' '+m.id+' '+(m.mobile||'')).toUpperCase().includes(q)).slice(0,20);
+ box.innerHTML=found.length?found.map(m=>`<button type="button" class="ghost" onclick="selectSpecificRecipient('${m.id}')" style="display:block;width:100%;text-align:left;margin:4px 0;padding:10px">
+ <b>${m.name}</b><br><span class="muted">${m.id} • SECTOR ${m.sector} • ${m.mobile||'NO MOBILE NUMBER'}</span></button>`).join(''):'<div class="muted" style="padding:8px">NO MATCHING ACTIVE KK MEMBER FOUND.</div>';
+}
+function selectSpecificRecipient(id){
+ let m=members.find(x=>x.id===id); if(!m)return;
+ if(!m.mobile){alert('This member has no registered mobile number. Add/update the mobile number first.');return}
+ selectedSpecificRecipient=m;
+ document.getElementById('specificRecipientResults').innerHTML='';
+ let card=document.getElementById('selectedRecipientCard');
+ card.style.display='block';
+ card.innerHTML=`<b>1 RECIPIENT SELECTED</b><br>${m.name}<br><span class="muted">${m.id} • ${m.mobile} • SECTOR ${m.sector}</span><br><button type="button" class="ghost" style="margin-top:8px" onclick="clearSpecificRecipient()">CHANGE RECIPIENT</button>`;
+}
+function clearSpecificRecipient(){
+ selectedSpecificRecipient=null;
+ document.getElementById('selectedRecipientCard').style.display='none';
+ document.getElementById('specificRecipientSearch').value='';
+ document.getElementById('specificRecipientSearch').focus();
+ document.getElementById('specificRecipientResults').innerHTML='<div class="muted" style="padding:8px">TYPE A NAME, YOUTHLINK ID OR MOBILE NUMBER.</div>';
+}
+
+function printCurrentEventAttendance(){
+ if(!currentDetailEvent){alert('Open an event first.');return}
+ const e=currentDetailEvent;
+ const people=e.att.map(id=>members.find(m=>m.id===id)).filter(Boolean);
+ const rowsPerPage=14;
+ const pages=Math.max(1,Math.ceil(Math.max(people.length,1)/rowsPerPage));
+ const fmtDate=(v)=>{if(!v)return '';const d=new Date(v+'T00:00:00');return d.toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'}).toUpperCase()};
+ const fmtTime=(v)=>{if(!v)return '';let [h,m]=v.slice(0,5).split(':').map(Number);const ap=h>=12?'PM':'AM';h=h%12||12;return `${h}:${String(m).padStart(2,'0')} ${ap}`};
+ let sheets='';
+ for(let p=0;p<pages;p++){
+   const chunk=people.slice(p*rowsPerPage,(p+1)*rowsPerPage);
+   let body=chunk.map((m,i)=>`<tr><td class="num">${p*rowsPerPage+i+1}</td><td>${m.name||''}</td><td>${m.position||''}</td><td>${m.address||m.home_address||('SECTOR '+(m.sector||''))}</td><td>${m.mobile||m.contact_number||''}</td></tr>`).join('');
+   if(!chunk.length) body='<tr><td class="num">1</td><td></td><td></td><td></td><td></td></tr>';
+   sheets+=`<section class="sheet">
+    <div class="official-head">
+      <img src="logo.png" class="official-logo" alt="SK Nagsimbaanan Logo">
+      <div class="headtext"><div>Republic of the Philippines</div><div>Province of La Union</div><div>Municipality of Bacnotan</div><div class="office">SANGGUNIANG KABATAAN NG NAGSIMBAANAN</div><div>Barangay Nagsimbaanan, Bacnotan, La Union</div></div>
+      <div></div>
+    </div>
+    <div class="doc-title">ATTENDANCE SHEET</div>
+    <div class="event-title">${String(e.title||'').toUpperCase()}</div>
+    <div class="meta"><b>DATE:</b> ${fmtDate(e.date)} &nbsp;&nbsp;&nbsp; <b>TIME:</b> ${fmtTime(e.time)}<br><b>VENUE:</b> ${String(e.venue||'').toUpperCase()}</div>
+    <table><thead><tr><th class="no">NO.</th><th class="name">NAME</th><th class="position">POSITION</th><th class="address">ADDRESS / SECTOR</th><th class="phone">PHONE NUMBER</th></tr></thead><tbody>${body}</tbody></table>
+    <div class="foot">YouthLink • SK Nagsimbaanan &nbsp; | &nbsp; Page ${p+1} of ${pages}</div>
+   </section>`;
+ }
+ const w=window.open('','_blank');
+ w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${String(e.title||'Event')} - Attendance</title><style>
+ @page{size:legal portrait;margin:.45in}*{box-sizing:border-box}html,body{margin:0;color:#000;font-family:Arial,sans-serif}.sheet{height:13.05in;position:relative;page-break-after:always}.sheet:last-child{page-break-after:auto}.official-head{display:grid;grid-template-columns:1.05in 1fr 1.05in;align-items:center;min-height:1.15in;border-bottom:2px solid #111;padding-bottom:.10in}.official-logo{width:.92in;height:.92in;object-fit:contain}.headtext{text-align:center;font-family:"Times New Roman",serif;font-size:10pt;line-height:1.15}.headtext .office{font-size:13pt;font-weight:700;margin:4px 0 2px}.doc-title{text-align:center;font-weight:800;font-size:15pt;margin:.18in 0 .04in}.event-title{text-align:center;font-weight:800;font-size:12pt;margin-bottom:.12in}.meta{font-size:9pt;line-height:1.5;margin-bottom:.12in}table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:8.5pt}th,td{border:1px solid #000;padding:5px}th{text-align:center;height:.32in}td{height:.58in}.no{width:5%;text-align:center}.name{width:31%}.position{width:18%}.address{width:26%}.phone{width:20%}.num{text-align:center}.foot{position:absolute;bottom:0;width:100%;border-top:1px solid #999;padding-top:5px;text-align:center;font-size:7pt}@media print{button{display:none}.sheet{overflow:hidden}}
+ </style></head><body>${sheets}</body></html>`);w.document.close();w.focus();setTimeout(()=>w.print(),500);
+}
+
+function generateAttendanceSheet(){
+ let title=(document.getElementById('asEvent').value||'').trim().toUpperCase();
+ let mm=(document.getElementById('asMonth').value||'').padStart(2,'0'),
+     dd=(document.getElementById('asDay').value||'').padStart(2,'0'),
+     yyyy=(document.getElementById('asYear').value||''),
+     hh=(document.getElementById('asHour').value||'').padStart(2,'0'),
+     min=(document.getElementById('asMinute').value||'').padStart(2,'0'),
+     ap=document.getElementById('asAmPm').value;
+ let venue=(document.getElementById('asVenue').value||'').trim().toUpperCase();
+ let total=Math.max(1,Math.min(500,Number(document.getElementById('asTotalEntries').value||14)));
+ const rowsPerPage=14;
+ const pages=Math.ceil(total/rowsPerPage);
+ if(!title){alert('Enter the event/activity name.');return}
+ if(!mm||!dd||yyyy.length!==4){alert('Complete the date: MM / DD / YYYY.');return}
+ let dateText=`${mm}/${dd}/${yyyy}`;
+ let timeText=(hh&&min)?`${hh}:${min} ${ap}`:'';
+ let pageHTML='';
+ for(let p=0;p<pages;p++){
+   const first=p*rowsPerPage+1;
+   const last=Math.min((p+1)*rowsPerPage,total);
+   let body='';
+   for(let n=first;n<=last;n++){
+     body+=`<tr><td class="num">${n}</td><td class="name"></td><td></td><td></td><td></td></tr>`;
+   }
+   // Fill remaining visual rows only when desired? User requested relevant numbering only,
+   // so only actual requested entries are rendered.
+   pageHTML+=`<section class="sheet">
+    <div class="govhead">
+      <div class="seal seal-left"><img class="sklogo" src="logo.png" alt="SK Nagsimbaanan"></div>
+      <div class="govtext">Republic of the Philippines<br>Province of La Union<br>Municipality of Bacnotan<br><b>SANGGUNIANG KABATAAN NG NAGSIMBAANAN</b><br>Barangay Nagsimbaanan, Bacnotan, La Union</div>
+      <div class="seal seal-right"></div>
+    </div>
+    <div class="eventinfo">
+      <div><b>EVENT / ACTIVITY:</b> ${title}</div>
+      <div><b>DATE:</b> ${dateText}</div>
+      ${timeText?`<div><b>TIME:</b> ${timeText}</div>`:''}
+      ${venue?`<div><b>VENUE:</b> ${venue}</div>`:''}
+    </div>
+    <table class="attendance">
+      <thead><tr>
+        <th class="no">No.</th>
+        <th class="name">NAME</th>
+        <th class="position">POSITION</th>
+        <th class="address">ADDRESS</th>
+        <th class="phone">PHONE NUMBER</th>
+      </tr></thead>
+      <tbody>${body}</tbody>
+    </table>
+    <div class="revision">Revised 2026-SEPTEMBER</div>
+    <div class="pagefoot">PAGE ${p+1} OF ${pages} • ENTRIES ${first}–${last}</div>
+   </section>`;
+ }
+ let w=window.open('','_blank');
+ // Pull embedded SK logo from the current app source.
+ let logo=[...document.images].find(i=>(i.alt||'').toUpperCase().includes('SANGGUNIANG') || (i.className||'').includes('sklogo'));
+ let logoSrc=logo?logo.src:'';
+ pageHTML=pageHTML.replaceAll('src="" alt="SK Nagsimbaanan"',`src="${logoSrc}" alt="SK Nagsimbaanan"`);
+ w.document.write(`<html><head><title>${title} - Attendance Sheet</title><style>
+ @page{size:8.5in 14in portrait;margin:0.45in}
+ *{box-sizing:border-box}
+ html,body{margin:0;padding:0;font-family:"Times New Roman",serif;color:#000}
+ .sheet{position:relative;width:100%;height:12.95in;page-break-after:always;padding:0;overflow:hidden}
+ .sheet:last-child{page-break-after:auto}
+ .govhead{height:1.55in;display:grid;grid-template-columns:1fr 2.5fr 1fr;align-items:start;padding-top:0}
+ .govtext{text-align:center;font-size:9px;line-height:1.15;padding-top:0.62in}
+ .govtext b{font-size:11px}
+ .seal{text-align:center}
+ .sklogo{width:23mm;height:23mm;object-fit:contain}
+ .seal-left{padding-top:1mm}
+ .seal-right{padding-top:3mm}
+ .flagmark{font-family:Arial,sans-serif;font-size:26px;line-height:1}
+ .seal-right small{font-family:Arial,sans-serif;font-size:6px;font-weight:bold}
+ .eventinfo{font-family:Arial,sans-serif;font-size:8px;line-height:1.35;margin:0.08in 0 0.12in 0}
+ .attendance{width:100%;max-width:100%;border-collapse:collapse;border-spacing:0;table-layout:fixed;font-family:Arial,sans-serif;font-size:7.5px}
+ .attendance th,.attendance td{border:0.75pt solid #000;box-sizing:border-box;overflow:hidden}
+ .attendance th{height:0.25in;text-align:center;font-weight:700;padding:0.02in}
+ .attendance td{height:0.54in;padding:0.03in;font-weight:400}
+ .attendance .no{width:5%;text-align:center}
+ .attendance .name{width:32%}
+ .attendance .position{width:20%}
+ .attendance .address{width:23%}
+ .attendance .phone{width:20%}
+ .attendance td.num{text-align:center;vertical-align:middle}
+ .revision{position:absolute;bottom:5mm;left:0;font-family:Arial,sans-serif;font-size:6px}
+ .pagefoot{position:absolute;bottom:5mm;right:0;font-family:Arial,sans-serif;font-size:6px}
+ @media print{
+   html,body{margin:0!important;padding:0!important;width:100%!important;height:auto!important}
+   .sheet{width:100%!important;margin:0!important;padding:0!important;transform:none!important;overflow:hidden!important}
+   .attendance{width:100%!important;max-width:100%!important;table-layout:fixed!important;border-collapse:collapse!important}
+   .attendance tr{page-break-inside:avoid!important}
+ }
+ </style></head><body>${pageHTML}</body></html>`);
+ w.document.close(); w.focus(); setTimeout(()=>w.print(),350);
+}
+
+function focusById(id){
+ let n=document.getElementById(id); if(!n)return;
+ n.focus(); if(n.select)try{n.select()}catch(_){}
+}
+document.addEventListener('input',function(e){
+ let el=e.target;
+ if(!el.classList.contains('auto-next'))return;
+ let max=Number(el.getAttribute('maxlength'));
+ el.value=el.value.replace(/\D/g,'');
+ if(Number.isFinite(max) && max>0) el.value=el.value.slice(0,max);
+ if(Number.isFinite(max) && max>0 && el.value.length>=max && el.dataset.next)focusById(el.dataset.next);
+});
+document.addEventListener('keydown',function(e){
+ let el=e.target;
+ if(!el.closest('#attendanceSheetDlg'))return;
+ if(e.key!=='Enter')return;
+ if(el.dataset.next){
+   e.preventDefault(); focusById(el.dataset.next);
+ }
+});
+document.getElementById('asAmPm')?.addEventListener('change',function(){ if(this.dataset.next)focusById(this.dataset.next); });
+
+
+// ===== YouthLink Vercel + Semaphore SMS integration =====
+function normalizePHMobile(v){
+  let n=String(v||'').replace(/\D/g,'');
+  if(n.startsWith('63') && n.length===12) return n;
+  if(n.startsWith('0') && n.length===11) return '63'+n.slice(1);
+  if(n.startsWith('9') && n.length===10) return '63'+n;
+  return '';
+}
+function getSMSRecipients(){
+  const group=document.getElementById('smsGroup')?.value||'';
+  let list=[];
+  if(group==='SPECIFIC KK MEMBER') list=selectedSpecificRecipient?[selectedSpecificRecipient]:[];
+  else if(group==='All Active KK Members' || group==='ALL SECTORS') list=members.filter(m=>!m.archived && status(m)==='Active');
+  else if(/^Sector [1-7]$/.test(group)){
+    const sector=group.split(' ')[1]; list=members.filter(m=>!m.archived && status(m)==='Active' && String(m.sector)===sector);
+  } else if(group==='Selected Event Attendees'){
+    const ids=new Set((currentDetailEvent?.att)||[]); list=members.filter(m=>ids.has(m.id));
+  }
+  const seen=new Set();
+  return list.map(m=>({name:m.name,id:m.id,mobile:normalizePHMobile(m.mobile)}))
+    .filter(x=>x.mobile && !seen.has(x.mobile) && seen.add(x.mobile));
+}
+async function reviewAndSendSMS(){
+  const message=(document.getElementById('smsMessage')?.value||'').trim();
+  const recipients=getSMSRecipients();
+  const statusBox=document.getElementById('smsSendStatus');
+  if(!message){alert('Enter an SMS message first.');return}
+  if(!recipients.length){alert('No valid recipient mobile number found for the selected group.');return}
+  const preview=recipients.slice(0,5).map(x=>x.name+' — +'+x.mobile).join('\n');
+  const more=recipients.length>5?`\n...and ${recipients.length-5} more`:'';
+  if(!confirm(`SEND SMS?\n\nRecipients: ${recipients.length}\n\n${preview}${more}\n\nMessage:\n${message}`))return;
+  const btn=document.getElementById('smsSendBtn'); btn.disabled=true; btn.textContent='Sending...';
+  statusBox.textContent=`Sending to ${recipients.length} recipient(s)...`;
+  try{
+    const {data:sessionData}=await sb.auth.getSession();
+    const token=sessionData?.session?.access_token;
+    if(!token) throw new Error('Your session expired. Please sign in again.');
+    const r=await fetch('/api/send-sms',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({recipients,message})});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(data.error||'SMS request failed.');
+    statusBox.innerHTML=`<span class="badge ok">SENT</span> ${data.sent||recipients.length} recipient(s) submitted to Semaphore.`;
+  }catch(err){
+    statusBox.innerHTML=`<span class="badge old">FAILED</span> ${String(err.message||err)}`;
+  }finally{btn.disabled=false;btn.textContent='Review & Send'}
+}
+
+
+// ===== ONLINE CRUD OVERRIDES =====
+async function saveMember(){
+ if(!sb)return alert('Database is not connected.');
+ let first=fFirst.value.trim(),middle=fMiddle.value.trim(),last=fLast.value.trim(),suffix=fSuffix.value.trim(),dob=fDob.value;
+ if(!first||!last||!dob)return alert('First name, last name, and date of birth are required.');
+ let name=[last+',',first,middle,suffix].filter(Boolean).join(' ');
+ let data={first,middle,last,suffix,name,dob,sector:fSector.value,sex:fSex.value,civil:fCivil.value,cls:fClass.value,needs:fNeeds.value,email:fEmail.value,mobile:fMobile.value,address:fAddress.value,edu:fEdu.value,work:fWork.value,sk:fSK.value,nat:fNat.value,vote:fVote.value,asm:fAsm.value,times:fTimes.value,why:fWhy.value,verify:fVerify.value,dataNotes:fDataNotes.value};
+ try{
+  if(editingMemberId){let old=members.find(x=>x.id===editingMemberId);let r=await sb.from('kk_members').update(dbMember({...old,...data})).eq('id',old.dbId);if(r.error)throw r.error;}
+  else{let max=Math.max(0,...members.map(m=>Number((m.id.match(/\d+$/)||['0'])[0])));let r=await sb.from('kk_members').insert(dbMember({id:'KK-NAG-'+String(max+1).padStart(4,'0'),...data,archived:false,archivedAt:''}));if(r.error)throw r.error;}
+  editingMemberId=null;memberDlg.close();await refreshOnline();nav('kk');
+ }catch(e){alert('Could not save profile: '+e.message)}
+}
+async function archiveMember(id){let m=members.find(x=>x.id===id);if(!m||!confirm('Archive '+m.name+'?'))return;let r=await sb.from('kk_members').update({archived:true,archived_at:new Date().toISOString()}).eq('id',m.dbId);if(r.error)return alert(r.error.message);await refreshOnline();}
+async function restoreMember(id){let m=members.find(x=>x.id===id);if(!m)return;let r=await sb.from('kk_members').update({archived:false,archived_at:null}).eq('id',m.dbId);if(r.error)return alert(r.error.message);await refreshOnline();}
+async function saveEvent(){
+ if(!eTitle.value.trim()||!eDate.value)return alert('Event title and date are required.');
+ try{
+  const selected=[...document.querySelectorAll('.att:checked')].map(x=>members.find(m=>m.id===x.value)).filter(Boolean);
+  if(editingEventId){
+   const eid=editingEventId;
+   let r=await sb.from('events').update({event_title:eTitle.value.trim(),event_date:eDate.value,event_time:eTime.value||null,venue:eVenue.value||''}).eq('id',eid);if(r.error)throw r.error;
+   r=await sb.from('event_attendance').delete().eq('event_id',eid);if(r.error)throw r.error;
+   const rows=selected.map(m=>({event_id:eid,member_id:m.dbId}));if(rows.length){let z=await sb.from('event_attendance').insert(rows);if(z.error)throw z.error;}
+  }else{
+   let r=await sb.from('events').insert({event_title:eTitle.value.trim(),event_date:eDate.value,event_time:eTime.value||null,venue:eVenue.value||''}).select().single();if(r.error)throw r.error;
+   const rows=selected.map(m=>({event_id:r.data.id,member_id:m.dbId}));if(rows.length){let z=await sb.from('event_attendance').insert(rows);if(z.error)throw z.error;}
+  }
+  editingEventId=null;eventDlg.close();eTitle.value='';document.querySelectorAll('.att:checked').forEach(x=>x.checked=false);await refreshOnline();nav('events');
+ }catch(e){alert('Could not save event: '+e.message)}
+}
+async function removeAttendance(memberId){
+ if(!currentDetailEvent)return;let m=members.find(x=>x.id===memberId);if(!m||!confirm('Remove '+m.name+' from this event attendance?'))return;
+ let eid=currentDetailEvent.id,r=await sb.from('event_attendance').delete().eq('event_id',eid).eq('member_id',m.dbId);if(r.error)return alert(r.error.message);
+ await refreshOnline();currentDetailEvent=events.find(e=>String(e.id)===String(eid));renderEventDetailNames();
+}
+async function deleteCurrentEvent(){
+ if(!currentDetailEvent||!confirm('Delete event "'+currentDetailEvent.title+'" and all attendance records? This cannot be undone.'))return;
+ let eid=currentDetailEvent.id,r=await sb.from('event_attendance').delete().eq('event_id',eid);if(r.error)return alert(r.error.message);
+ r=await sb.from('events').delete().eq('id',eid);if(r.error)return alert(r.error.message);
+ currentDetailEvent=null;eventDetailsDlg.close();await refreshOnline();
+}
+
+</script></body></html>
