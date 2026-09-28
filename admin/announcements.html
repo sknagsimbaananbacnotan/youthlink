@@ -1,0 +1,47 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YouthLink Wi-Fi Announcements Admin</title>
+<style>
+:root{--navy:#0b2f5b;--blue:#1565a8;--red:#b3262f;--bg:#eef4fa;--line:#d6e2ee}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Arial;color:#17324f}
+header{background:var(--navy);color:white;padding:18px}header div{max-width:900px;margin:auto}main{max-width:900px;margin:22px auto;padding:0 16px}
+.card{background:white;border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 5px 18px rgba(10,45,80,.05)}
+h1{font-size:22px;margin:0}h2{font-size:17px;margin:0 0 12px}
+label{display:block;font-size:12px;font-weight:700;margin:10px 0 5px}input,textarea{width:100%;padding:11px;border:1px solid #bfcddd;border-radius:7px;font:inherit}textarea{min-height:95px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:7px;padding:11px 15px;background:var(--blue);color:#fff;font-weight:700;cursor:pointer}.danger{background:var(--red)}.ghost{background:#e9f1f8;color:var(--navy)}
+.item{border-top:1px solid var(--line);padding:13px 0}.item:first-child{border-top:0}.actions{display:flex;gap:8px;margin-top:8px}.muted{color:#6a7d90;font-size:12px}.msg{padding:10px;border-radius:7px;margin:10px 0;display:none}.ok{background:#e5f5ea;color:#176137}.err{background:#fde9eb;color:#9b202a}
+@media(max-width:600px){.row{grid-template-columns:1fr}}
+</style></head>
+<body><header><div><h1>YouthLink • Wi-Fi Announcement Admin</h1><div style="opacity:.8;font-size:13px">SK Nagsimbaanan</div></div></header>
+<main>
+<div class="card" id="loginCard"><h2>Administrator Access</h2><label>Admin Password</label><input id="pw" type="password" autocomplete="current-password"><button class="btn" style="margin-top:12px" onclick="login()">Open Announcement Manager</button><div id="loginMsg" class="msg err"></div></div>
+<div id="manager" hidden>
+ <div class="card"><h2 id="formTitle">Create Announcement</h2>
+  <input id="id" type="hidden">
+  <div class="row"><div><label>Display Date</label><input id="date" placeholder="September 28, 2026"></div><div><label>Status</label><select id="active" style="width:100%;padding:11px;border:1px solid #bfcddd;border-radius:7px"><option value="true">Published</option><option value="false">Hidden</option></select></div></div>
+  <label>Title</label><input id="title" maxlength="160">
+  <label>Message</label><textarea id="body" maxlength="1200"></textarea>
+  <div class="actions"><button class="btn" onclick="save()">Save Announcement</button><button class="btn ghost" onclick="clearForm()">Clear</button></div>
+  <div id="msg" class="msg"></div>
+ </div>
+ <div class="card"><h2>Announcements</h2><div class="muted">Published items appear automatically on the captive portal. No HTML re-upload is needed.</div><div id="list"></div></div>
+</div>
+</main>
+<script>
+let token=sessionStorage.getItem('wifiAdminToken')||'';
+function show(el,text,ok=false){el.textContent=text;el.className='msg '+(ok?'ok':'err');el.style.display='block'}
+async function login(){
+ const r=await fetch('/api/admin-login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({password:pw.value})});
+ const j=await r.json(); if(!r.ok){show(loginMsg,j.error||'Login failed');return}
+ token=j.token;sessionStorage.setItem('wifiAdminToken',token);loginCard.hidden=true;manager.hidden=false;load();
+}
+async function api(url,opt={}){opt.headers={...(opt.headers||{}),'authorization':'Bearer '+token,'content-type':'application/json'};const r=await fetch(url,opt);const j=await r.json();if(r.status===401){sessionStorage.removeItem('wifiAdminToken');location.reload();throw Error('Session expired')}if(!r.ok)throw Error(j.error||'Request failed');return j}
+async function load(){try{const j=await api('/api/announcements?admin=1');render(j.announcements||[])}catch(e){show(msg,e.message)}}
+function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function render(rows){list.innerHTML=rows.length?'':'<p class="muted">No announcements yet.</p>';rows.forEach(a=>{const d=document.createElement('div');d.className='item';d.innerHTML=`<b>${esc(a.title)}</b><div class="muted">${esc(a.display_date||'')} • ${a.active?'Published':'Hidden'}</div><div>${esc(a.body||'')}</div><div class="actions"><button class="btn ghost">Edit</button><button class="btn danger">Delete</button></div>`;d.querySelectorAll('button')[0].onclick=()=>edit(a);d.querySelectorAll('button')[1].onclick=()=>del(a.id);list.appendChild(d)})}
+function edit(a){id.value=a.id;date.value=a.display_date||'';title.value=a.title||'';body.value=a.body||'';active.value=String(!!a.active);formTitle.textContent='Edit Announcement';scrollTo({top:0,behavior:'smooth'})}
+function clearForm(){id.value='';date.value='';title.value='';body.value='';active.value='true';formTitle.textContent='Create Announcement'}
+async function save(){try{if(!title.value.trim())throw Error('Title is required.');const payload={id:id.value||null,display_date:date.value.trim(),title:title.value.trim(),body:body.value.trim(),active:active.value==='true'};await api('/api/announcements',{method:id.value?'PUT':'POST',body:JSON.stringify(payload)});show(msg,'Announcement saved.',true);clearForm();load()}catch(e){show(msg,e.message)}}
+async function del(x){if(!confirm('Delete this announcement?'))return;try{await api('/api/announcements?id='+encodeURIComponent(x),{method:'DELETE'});load()}catch(e){show(msg,e.message)}}
+if(token){loginCard.hidden=true;manager.hidden=false;load()}
+</script></body></html>
