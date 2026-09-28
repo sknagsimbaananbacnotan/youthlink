@@ -1,0 +1,26 @@
+YOUTHLINK — LATEST REVIEW + PHONE + APPROVAL FIX
+
+REPLACE/UPLOAD ALL FILES in this ZIP to the same GitHub repository structure.
+
+IMPORTANT VERCEL PRODUCTION ENVIRONMENT VARIABLES:
+SUPABASE_URL
+SUPABASE_PUBLISHABLE_KEY
+SUPABASE_SERVICE_ROLE_KEY
+SEMAPHORE_API_KEY
+SEMAPHORE_SENDER_NAME
+
+IMPORTANT:
+- SUPABASE_SERVICE_ROLE_KEY is SERVER-ONLY. Never put it in index.html, profiling.html, or public GitHub code.
+- api/config.js exposes ONLY the publishable key, never the service-role key.
+- After adding/changing an Environment Variable, redeploy Production in Vercel.
+
+FIXES INCLUDED:
+1. Public Submission > Review now opens a full details window before Approve/Reject.
+2. Contact Number is required in profiling.html and must be 09XXXXXXXXX.
+3. Approval uses a server-side Supabase service-role client, preventing browser RLS from blocking writes to kk_members.
+4. Approval refuses records without a valid mobile number.
+5. Existing automatic profiling confirmation SMS remains enabled through api/profile-submit.js.
+6. SMS template settings remain server-side.
+
+If approval still says permission denied for kk_members:
+Check that SUPABASE_SERVICE_ROLE_KEY in Vercel is the actual Supabase service_role secret, not the publishable/anon key, then Redeploy.
