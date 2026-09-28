@@ -1,8 +1,0 @@
-{
-  "name": "youthlink",
-  "version": "1.0.0",
-  "private": true,
-  "dependencies": {
-    "@supabase/supabase-js": "^2.58.0"
-  }
-}
