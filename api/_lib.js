@@ -1,0 +1,8 @@
+const crypto=require('crypto');
+function env(n){const v=process.env[n];if(!v)throw new Error('Missing environment variable: '+n);return v}
+function cors(res){res.setHeader('Cache-Control','no-store');res.setHeader('Access-Control-Allow-Origin','*');res.setHeader('Access-Control-Allow-Headers','content-type, authorization');res.setHeader('Access-Control-Allow-Methods','GET,POST,PUT,DELETE,OPTIONS')}
+function sign(payload){const raw=Buffer.from(JSON.stringify(payload)).toString('base64url');const sig=crypto.createHmac('sha256',env('WIFI_ADMIN_SECRET')).update(raw).digest('base64url');return raw+'.'+sig}
+function verify(token){try{const [raw,sig]=token.split('.');const exp=crypto.createHmac('sha256',env('WIFI_ADMIN_SECRET')).update(raw).digest('base64url');if(!crypto.timingSafeEqual(Buffer.from(sig||''),Buffer.from(exp)))return null;const p=JSON.parse(Buffer.from(raw,'base64url').toString());if(!p.exp||Date.now()>p.exp)return null;return p}catch{return null}}
+function auth(req){const h=req.headers.authorization||'';return verify(h.startsWith('Bearer ')?h.slice(7):'')}
+async function sb(path,opt={}){const url=env('SUPABASE_URL').replace(/\/$/,'')+'/rest/v1/'+path;const key=env('SUPABASE_SERVICE_ROLE_KEY');const r=await fetch(url,{...opt,headers:{apikey:key,authorization:'Bearer '+key,'content-type':'application/json',...(opt.headers||{})}});const text=await r.text();let j;try{j=text?JSON.parse(text):null}catch{j=text}if(!r.ok)throw new Error((j&&j.message)||text||('Supabase '+r.status));return j}
+module.exports={env,cors,sign,auth,sb};
