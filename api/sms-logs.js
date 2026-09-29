@@ -88,7 +88,6 @@ module.exports = async (req, res) => {
         semaphore_message_id,
         semaphore_status,
         error_message,
-        sent_by_uuid,
         sent_by_email
       `)
       .order('created_at', {
