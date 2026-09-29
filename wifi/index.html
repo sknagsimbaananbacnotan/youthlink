@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b2f5b">
+<title>SK Free-WiFi Nagsimbaanan</title>
+<style>
+:root{
+ --navy:#123f78;--navy-deep:#082b57;--blue:#1496e5;--blue-mid:#2878bd;--red:#c72b35;--ink:#102d50;--muted:#5e7590;
+ --bg:#eef7ff;--surface:#ffffff;--line:#c9def1;--tint:#f3f9ff;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(180deg,#f8fcff 0,#eaf5ff 55%,#f6fbff 100%);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+svg{display:block;flex:0 0 auto}
+a{color:inherit}
+:focus-visible{outline:3px solid #7fb2e5;outline-offset:2px}
+
+/* header */
+.top{background:linear-gradient(135deg,var(--navy-deep),var(--navy));color:#fff}
+.head{max-width:720px;margin:auto;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.seal{width:52px;height:52px;object-fit:contain;background:#fff;border-radius:50%;padding:3px}
+.brand b{display:block;font-size:15px;line-height:1.25;font-weight:650}
+.brand small{display:block;font-size:12px;color:#b9cbe0;margin-top:2px}
+.clock{text-align:right;font-variant-numeric:tabular-nums}
+.clock b{display:block;font-size:18px;font-weight:600}
+.clock small{display:block;font-size:11px;color:#b9cbe0}
+.flag{height:4px;background:linear-gradient(90deg,var(--red) 0 33.3%,#f2f4f7 33.3% 66.6%,var(--blue) 66.6%)}
+
+main{max-width:720px;margin:auto;padding:20px 16px 96px}
+
+/* connect card */
+.card,.section{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(18,63,120,.07)}
+.status{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line);background:#edf6ff}
+.state{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:650}
+.state svg{color:var(--blue)}
+.pending{color:#7a5a08;background:#fdf1cf;border-radius:4px;padding:4px 10px;font-size:12px;font-weight:650}
+.pldt{font-size:12px;color:var(--muted);text-align:right}
+.pldt strong{color:#c8202f;font-size:14px}
+.hero{padding:30px 22px 8px;text-align:center}
+.hero h1{margin:0;font-size:28px;line-height:1.15;color:var(--navy);letter-spacing:-.01em;font-weight:700}
+.hero p{margin:12px auto 0;max-width:460px;color:var(--muted);font-size:15px}
+.device{margin-top:14px;font-size:13px;color:var(--muted)}
+.connectarea{padding:20px 22px 26px;text-align:center}
+.connect{width:min(420px,100%);min-height:54px;border:0;border-radius:7px;background:linear-gradient(90deg,var(--navy),var(--blue));color:#fff;font:inherit;font-size:17px;font-weight:650;cursor:pointer;transition:background .15s}
+.connect:hover{background:linear-gradient(90deg,var(--navy-deep),var(--blue-mid))}
+.connect:disabled{opacity:.65;cursor:default}
+.terms{margin:12px auto 0;max-width:420px;font-size:12px;color:var(--muted)}
+
+/* sections */
+.section{margin-top:14px;padding:20px}
+.section h2{display:flex;align-items:center;gap:9px;margin:0 0 6px;font-size:18px;color:var(--navy);font-weight:650}
+.section>p{margin:0 0 14px;color:var(--muted);font-size:14px}
+
+.profile{display:flex;align-items:center;justify-content:space-between;gap:12px;text-decoration:none;border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:5px;padding:14px 16px;background:var(--tint)}
+.profile:hover{background:#e8f5ff}
+.profile b{display:block;font-size:15px;color:var(--navy)}
+.profile span{font-size:13px;color:var(--muted)}
+.profile svg{color:var(--blue)}
+
+/* announcements */
+.announce{border-left:5px solid var(--blue)}
+.announce[hidden]{display:none}
+.ann-list{display:grid;gap:0}
+.ann{padding:12px 0;border-top:1px solid var(--line)}
+.ann:first-child{border-top:0;padding-top:4px}
+.ann:last-child{padding-bottom:0}
+.ann time{display:block;font-size:12px;color:var(--muted)}
+.ann b{display:block;margin-top:2px;font-size:15px;color:var(--ink)}
+.ann p{margin:4px 0 0;font-size:14px;color:var(--muted)}
+
+/* KK profiling banner */
+.kk{display:flex;align-items:center;gap:14px;margin-top:14px;padding:18px;background:linear-gradient(135deg,var(--navy-deep),var(--navy));color:#fff;border-radius:10px;border-left:6px solid var(--red);text-decoration:none}
+.kk:hover{background:linear-gradient(135deg,#06254c,#164b89)}
+.kk-icon{width:48px;height:48px;border-radius:6px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.kk-copy{flex:1;min-width:0}
+.kk-copy b{display:block;font-size:18px;font-weight:700;line-height:1.2}
+.kk-copy small{display:block;margin-top:4px;font-size:13px;line-height:1.45;color:#c5d4e5}
+.kk-btn{flex:0 0 auto;background:#fff;color:var(--navy);border-radius:5px;padding:11px 16px;font-size:14px;font-weight:700;white-space:nowrap}
+.kk:hover .kk-btn{background:#e8f0f8}
+@media(max-width:520px){.kk{flex-wrap:wrap}.kk-copy{flex:1 1 calc(100% - 70px)}.kk-btn{width:100%;text-align:center}}
+
+/* emergency */
+.emergency{border-top:4px solid var(--red)}
+.emergency h2{color:var(--red)}
+.primary-call{display:flex;align-items:center;justify-content:space-between;gap:12px;text-decoration:none;background:var(--red);color:#fff;border-radius:5px;padding:14px 16px;margin-bottom:10px}
+.primary-call span{font-size:15px;font-weight:600;line-height:1.3}
+.primary-call small{display:block;font-size:12px;font-weight:400;color:#f6d5d8}
+.primary-call b{display:flex;align-items:center;gap:8px;font-size:26px;letter-spacing:.02em}
+.primary-call:active,.dial:active{filter:brightness(.95)}
+.directory{border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.directory.more{margin-top:10px}
+.directory[hidden]{display:none}
+.dial{display:flex;align-items:center;justify-content:space-between;gap:12px;text-decoration:none;padding:10px 12px 10px 14px;min-height:60px;background:#fff}
+.dial+.dial{border-top:1px solid var(--line)}
+.dial:hover{background:var(--tint)}
+.dial .who b{display:block;font-size:14px;font-weight:600;color:var(--ink)}
+.dial .who small{display:block;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.callbtn{display:flex;align-items:center;gap:6px;flex:0 0 auto;background:#fff;color:var(--red);border:1.5px solid var(--red);border-radius:5px;padding:9px 16px;font-size:14px;font-weight:650}
+.dial:hover .callbtn{background:var(--red);color:#fff}
+.seeall{display:block;width:100%;margin-top:10px;min-height:46px;background:#fff;border:1px solid var(--line);border-radius:5px;color:var(--navy);font:inherit;font-size:14px;font-weight:650;cursor:pointer}
+.seeall:hover{background:var(--tint)}
+#emergencyHotlines{scroll-margin-top:12px}
+#emergencyHotlines.emFlash{animation:flash 1.2s ease}
+@keyframes flash{0%,100%{box-shadow:none}30%,65%{box-shadow:0 0 0 3px rgba(179,38,47,.25)}}
+
+/* contact */
+.service-list{display:grid;gap:0;border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.service-btn{display:flex;align-items:center;gap:14px;text-decoration:none;padding:13px 14px;background:#fff}
+.service-btn+.service-btn{border-top:1px solid var(--line)}
+.service-btn:hover{background:var(--tint)}
+.service-icon{width:36px;height:36px;border-radius:7px;background:#e2f3ff;color:var(--blue);display:flex;align-items:center;justify-content:center}
+.service-copy{flex:1;min-width:0}
+.service-copy small{display:block;font-size:12px;color:var(--muted)}
+.service-copy b{display:block;font-size:14px;font-weight:600;overflow-wrap:anywhere}
+.service-arrow{color:#8a9aab}
+
+/* floating button */
+.floating-emergency{position:fixed;right:14px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:9999;display:flex;align-items:center;gap:8px;border:0;border-radius:6px;background:var(--red);color:#fff;padding:12px 16px;font:inherit;font-size:14px;font-weight:650;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+
+/* footer */
+.footer{background:linear-gradient(135deg,var(--navy-deep),var(--navy));color:#c5d4e5;padding:22px 16px calc(22px + env(safe-area-inset-bottom,0px));text-align:center;font-size:13px;line-height:1.7}
+.footer b{color:#fff;font-weight:650}
+.powered{margin-bottom:8px;font-size:13px}
+.powered strong{color:#fff}
+
+@media(max-width:520px){
+ .clock{display:none}
+ .hero h1{font-size:24px}
+ .brand b{font-size:14px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}#emergencyHotlines.emFlash{animation:none}}
+
+.admin-access{
+  margin:22px auto 8px;
+  text-align:center;
+  font-size:12px;
+  color:#6d8299;
+}
+.admin-access a{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:9px 13px;
+  border:1px solid #c9def1;
+  border-radius:999px;
+  background:#f7fbff;
+  color:#315d8b;
+  text-decoration:none;
+  font-weight:700;
+  transition:.18s ease;
+}
+.admin-access a:hover{
+  background:#e8f5ff;
+  border-color:#9fc8e8;
+  color:#123f78;
+}
+.admin-access small{
+  display:block;
+  margin-top:6px;
+  font-size:10px;
+  letter-spacing:.03em;
+  color:#8294a8;
+}
+
+</style>
+</head>
+<body>
+<header class="top">
+ <div class="head">
+  <div class="brand"><img class="seal" src="/logo.png" alt="SK Nagsimbaanan logo"><div><b>Sangguniang Kabataan<br>Barangay Nagsimbaanan</b><small>Bacnotan, La Union • Public Community Wi-Fi</small></div></div>
+  <div class="clock"><b id="clock">--:--:--</b><small id="date"></small><small>Philippine Standard Time</small></div>
+ </div>
+ <div class="flag"></div>
+</header>
+
+<main>
+ <section class="card">
+  <div class="status">
+   <div class="state">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 8.8a15 15 0 0 1 20 0"/><path d="M5.5 12.4a10 10 0 0 1 13 0"/><path d="M9 16a5 5 0 0 1 6 0"/><circle cx="12" cy="19.4" r="1" fill="currentColor"/></svg>
+    <span class="pending" id="status">PENDING CONNECTION</span>
+   </div>
+   <div class="pldt">Powered by <strong>PLDT</strong> Enterprise</div>
+  </div>
+  <div class="hero">
+   <h1>Welcome to SK Free-WiFi<br>Nagsimbaanan</h1>
+   <p>Official public community Wi-Fi service of the Sangguniang Kabataan of Barangay Nagsimbaanan.</p>
+   <div class="device" id="device">Connecting from your device</div>
+  </div>
+  <div class="connectarea">
+   <button class="connect" id="connectBtn">CONNECT</button>
+   <p class="terms">Sa pag-tap ng CONNECT, sumasang-ayon ka sa aming Terms of Use at responsible internet use policy.</p>
+  </div>
+ </section>
+
+
+ <section class="section announce" id="announce" hidden aria-labelledby="annTitle">
+  <h2 id="annTitle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 18-6v14L3 13z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>Announcements</h2>
+  <div class="ann-list" id="annList"></div>
+ </section>
+
+ <a class="kk" href="/profiling.html">
+  <span class="kk-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m17 11 2 2 4-4"/></svg></span>
+  <span class="kk-copy"><b>KK Youth Profiling</b><small>Magparehistro o i-update ang iyong youth profile sa YouthLink. Para sa lahat ng kabataan ng Nagsimbaanan.</small></span>
+  <span class="kk-btn">Register now</span>
+ </a>
+
+ <section class="section emergency" id="emergencyHotlines">
+  <h2>Emergency Hotlines</h2>
+  <p>Kung may emergency, makipag-ugnayan sa inyong Punong Barangay o tumawag sa mga opisyal na emergency hotlines ng LGU Bacnotan. Tap any number to call.</p>
+  <a class="primary-call" href="tel:911"><span><small>Tap to call</small>National / La Union Emergency</span><b><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A22 22 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg> 911</b></a>
+  <div class="directory">
+   <a class="dial" href="tel:09195461800"><span class="who"><b>Bacnotan Rescue</b><small>0919-546-1800</small></span><span class="callbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call</span></a>
+   <a class="dial" href="tel:09494742161"><span class="who"><b>MDRRMO</b><small>0949-474-2161</small></span><span class="callbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call</span></a>
+   <a class="dial" href="tel:09985985156"><span class="who"><b>PNP-Bacnotan</b><small>0998-598-5156</small></span><span class="callbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call</span></a>
+   <a class="dial" href="tel:09171842711"><span class="who"><b>BFP-Bacnotan</b><small>0917-184-2711</small></span><span class="callbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call</span></a>
+   <a class="dial" href="tel:09516762335"><span class="who"><b>Bacnotan District Hospital</b><small>0951-676-2335</small></span><span class="callbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call</span></a>
+  </div>
+  <button class="seeall" id="seeAll" type="button" aria-expanded="false" aria-controls="moreHotlines">See all hotlines (11 more)</button>
+  <div class="directory more" id="moreHotlines" hidden>
+   <a class="dial" href="tel:09177739994"><span class="who"><b>MDRRMO</b><small>0917-773-9994</small></span><span class="callbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call</span></a>
+   <a class="dial" href="tel:09155137245"><span class="who"><b>PNP-Bacnotan</b><small>0915-513-7245</small></span><span class="callbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call</span></a>
+   <a class="dial" href="tel:0726075472"><span class="who"><b>BFP-Bacnotan</b><small>(072) 607-5472</small></span><span class="callbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call</span></a>
+   <a class="dial" href="tel:09602886940"><span class="who"><b>Coast Guard Substation San Juan</b><small>0960-288-6940</small></span><span class="callbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call</span></a>
+   <a class="dial" href="tel:09098471268"><span class="who"><b>Municipal Health Office</b><small>0909-847-1268</small></span><span class="callbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call</span></a>
+   <a class="dial" href="tel:09177189585"><span class="who"><b>Municipal Health Office</b><small>0917-718-9585</small></span><span class="callbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call</span></a>
+   <a class="dial" href="tel:09309158479"><span class="who"><b>Municipal Health Office</b><small>0930-915-8479</small></span><span class="callbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call</span></a>
+   <a class="dial" href="tel:09171304671"><span class="who"><b>LUELCO-Bacnotan</b><small>0917-130-4671</small></span><span class="callbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call</span></a>
+   <a class="dial" href="tel:09285203893"><span class="who"><b>MSWDO</b><small>0928-520-3893</small></span><span class="callbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call</span></a>
+   <a class="dial" href="tel:09295810383"><span class="who"><b>Mayor's Office</b><small>0929-581-0383</small></span><span class="callbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call</span></a>
+   <a class="dial" href="tel:09153501441"><span class="who"><b>Mayor's Office</b><small>0915-350-1441</small></span><span class="callbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call</span></a>
+  </div>
+ </section>
+
+ <section class="section">
+  <h2>Contact Us</h2>
+  <p>For inquiries, concerns, or assistance, you may reach us through:</p>
+  <div class="service-list">
+   <a class="service-btn" href="mailto:sknagsimbaanan.bacnotan@gmail.com">
+    <span class="service-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
+    <span class="service-copy"><small>Email</small><b>sknagsimbaanan.bacnotan@gmail.com</b></span>
+    <svg class="service-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+   </a>
+   <a class="service-btn" href="tel:0726132244">
+    <span class="service-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></span>
+    <span class="service-copy"><small>Phone</small><b>(072) 613-2244</b></span>
+    <svg class="service-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+   </a>
+   <a class="service-btn" href="https://maps.google.com/?q=Las+Palmas+Street+Barangay+Nagsimbaanan+Bacnotan+La+Union">
+    <span class="service-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
+    <span class="service-copy"><small>Office address</small><b>Las Palmas Street, Brgy. Nagsimbaanan, Bacnotan, La Union</b></span>
+    <svg class="service-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+   </a>
+  </div>
+ </section>
+</main>
+
+<button class="floating-emergency" id="emergencyFloat" type="button" aria-label="Jump to emergency hotlines">
+ <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>
+ Emergency
+</button>
+
+
+<div class="admin-access">
+  <a href="/" target="_self" aria-label="YouthLink Admin Login">🔐 YouthLink Admin Login</a>
+  <small>AUTHORIZED SK PERSONNEL ONLY</small>
+</div>
+
+<footer class="footer">
+ <div class="powered">Powered by <strong>PLDT</strong> Enterprise</div>
+ <b>Office of the Sangguniang Kabataan — Barangay Nagsimbaanan</b><br>
+ Las Palmas Street • Brgy. Nagsimbaanan Multi-Purpose Hall<br>
+ sknagsimbaanan.bacnotan@gmail.com • (072) 613-2244<br>
+<a href="/admin/announcements.html" style="color:#9fb8d2;font-size:11px;text-decoration:none">Announcement Admin</a>
+</footer>
+
+<script>
+/* ANNOUNCEMENTS — loaded from Vercel API / Supabase. */
+async function loadAnnouncements(){
+ const box=document.getElementById('announce'),list=document.getElementById('annList');
+ try{
+   const r=await fetch('/api/announcements',{cache:'no-store'});
+   const j=await r.json();
+   const rows=(j&&Array.isArray(j.announcements))?j.announcements:[];
+   list.innerHTML='';
+   if(!rows.length){box.hidden=true;return}
+   rows.forEach(a=>{
+     const d=document.createElement('div');d.className='ann';
+     const t=document.createElement('time');t.textContent=a.display_date||a.date||'';
+     const h=document.createElement('b');h.textContent=a.title||'';
+     const p=document.createElement('p');p.textContent=a.body||'';
+     if(t.textContent)d.appendChild(t);d.appendChild(h);if(p.textContent)d.appendChild(p);list.appendChild(d);
+   });
+   box.hidden=false;
+ }catch(e){ box.hidden=true; }
+}
+loadAnnouncements();
+function tick(){const d=new Date(),o={timeZone:'Asia/Manila',hour:'2-digit',minute:'2-digit',second:'2-digit'};document.getElementById('clock').textContent=d.toLocaleTimeString('en-US',o);document.getElementById('date').textContent=d.toLocaleDateString('en-US',{timeZone:'Asia/Manila',weekday:'long',month:'long',day:'numeric',year:'numeric'})}tick();setInterval(tick,1000);
+const q=new URLSearchParams(location.search), g=(...a)=>{for(const k of a){let v=q.get(k);if(v)return v}return''};
+const omada={
+ clientMac:g('clientMac','client_mac','client','cid','mac'),
+ apMac:g('apMac','ap_mac','ap','apmac'),
+ ssidName:g('ssidName','ssid','ssid_name'),
+ radioId:g('radioId','radio_id','rid'),
+ site:g('site','siteId','site_id'),
+ redirectUrl:g('redirectUrl','redirect','url','target','redirect_url')
+};
+const ua=navigator.userAgent;document.getElementById('device').textContent='Connecting from: '+(/iPhone/.test(ua)?'iPhone (iOS)':/Android/.test(ua)?'Android device':/Mac/.test(ua)?'Mac / Safari':'your device');
+document.getElementById('connectBtn').onclick=async function(){
+ const b=this,st=document.getElementById('status');
+ const p=omada;
+
+ const missing=[];
+ if(!p.clientMac) missing.push('clientMac');
+ if(!p.apMac) missing.push('apMac');
+ if(!p.ssidName) missing.push('ssidName');
+ if(!p.radioId) missing.push('radioId');
+
+ if(missing.length){
+   console.warn('Missing Omada captive-portal parameters:',missing,p);
+   alert('Please open this page from the SK Free-WiFi captive portal after joining the Wi-Fi network.\n\nMissing portal data: '+missing.join(', '));
+   return;
+ }
+
+ b.disabled=true;
+ b.textContent='CONNECTING...';
+ st.textContent='CONNECTING';
+ st.style.background='';
+ st.style.color='';
+
+ try{
+   const r=await fetch('/api/wifi-connect',{
+     method:'POST',
+     headers:{'content-type':'application/json'},
+     body:JSON.stringify(p)
+   });
+
+   let j;
+   try{
+     j=await r.json();
+   }catch(_){
+     throw new Error('The Wi-Fi authorization server returned an invalid response.');
+   }
+
+   if(!r.ok||!j.ok){
+     console.error('Wi-Fi authorization failed:',j);
+     throw new Error(j.message||j.error||'Connection authorization failed.');
+   }
+
+   st.textContent='CONNECTED';
+   st.style.background='#dff0e5';
+   st.style.color='#1f6b3b';
+   b.textContent='CONNECTED';
+
+   setTimeout(()=>location.href=p.redirectUrl||'https://www.google.com/generate_204',800);
+ }catch(e){
+   console.error('SK Free-WiFi connect error:',e);
+   alert(e&&e.message?e.message:'Unable to authorize this device. Please try again.');
+   b.disabled=false;
+   b.textContent='TRY AGAIN';
+   st.textContent='CONNECTION FAILED';
+   st.style.background='#fde7e9';
+   st.style.color='#9b1c27';
+ }
+};
+
+document.getElementById('seeAll').addEventListener('click',function(){
+ const m=document.getElementById('moreHotlines'),open=m.hidden;
+ m.hidden=!open;this.setAttribute('aria-expanded',open);
+ this.textContent=open?'Show fewer':'See all hotlines ('+m.querySelectorAll('.dial').length+' more)';
+});
+document.getElementById('emergencyFloat').addEventListener('click',function(){
+ const e=document.getElementById('emergencyHotlines');
+ e.scrollIntoView({behavior:'smooth',block:'start'});
+ e.classList.remove('emFlash'); void e.offsetWidth; e.classList.add('emFlash');
+ setTimeout(()=>e.classList.remove('emFlash'),1400);
+});
+</script>
+</body>
+</html>
