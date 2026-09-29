@@ -1,16 +1,29 @@
 module.exports = async function handler(req, res) {
-  // POST only
+  // ============================================================
+  // YouthLink / SK Free-WiFi Nagsimbaanan
+  // Omada External Portal Authorization API
+  // ============================================================
+
+  res.setHeader("Cache-Control", "no-store");
+
+  // POST requests only
   if (req.method !== "POST") {
     return res.status(405).json({
       ok: false,
-      error: "Method not allowed"
+      error: "Method not allowed",
     });
   }
 
   try {
+    // ============================================================
+    // 1. LOAD VERCEL ENVIRONMENT VARIABLES
+    // ============================================================
+
     const controllerUrl = String(
       process.env.OMADA_CONTROLLER_URL || ""
-    ).replace(/\/+$/, "");
+    )
+      .replace(/\/+$/, "")
+      .trim();
 
     const controllerId = String(
       process.env.OMADA_CONTROLLER_ID || ""
@@ -24,61 +37,90 @@ module.exports = async function handler(req, res) {
       process.env.OMADA_OPERATOR_PASSWORD || ""
     );
 
-    // Check Vercel environment variables
     if (!controllerUrl || !controllerId || !username || !password) {
       return res.status(500).json({
         ok: false,
-        error: "Missing Omada environment variables."
+        error: "Missing Omada environment variables.",
+        required: [
+          "OMADA_CONTROLLER_URL",
+          "OMADA_CONTROLLER_ID",
+          "OMADA_OPERATOR_USERNAME",
+          "OMADA_OPERATOR_PASSWORD",
+        ],
       });
     }
 
-    const body =
-      typeof req.body === "string"
-        ? JSON.parse(req.body || "{}")
-        : (req.body || {});
+    // ============================================================
+    // 2. READ CLIENT INFORMATION FROM PORTAL
+    // ============================================================
+
+    let body = {};
+
+    if (typeof req.body === "string") {
+      try {
+        body = JSON.parse(req.body || "{}");
+      } catch {
+        body = {};
+      }
+    } else {
+      body = req.body || {};
+    }
 
     const clientMac = String(body.clientMac || "").trim();
     const clientIp = String(body.clientIp || "").trim();
     const apMac = String(body.apMac || "").trim();
     const ssidName = String(body.ssidName || "").trim();
-    const radioId = String(body.radioId || "").trim();
+    const radioId = String(body.radioId ?? "").trim();
     const site = String(body.site || "").trim();
+
     const originUrl = String(
-      body.originUrl || body.redirectUrl || ""
+      body.originUrl ||
+      body.redirectUrl ||
+      ""
     ).trim();
 
-    if (!clientMac || !apMac || !ssidName || !radioId) {
+    // Omada EAP External Portal requires these values.
+    if (
+      !clientMac ||
+      !apMac ||
+      !ssidName ||
+      radioId === "" ||
+      !site
+    ) {
       return res.status(400).json({
         ok: false,
         error: "Missing Omada client information.",
         received: {
-          clientMac: !!clientMac,
-          clientIp: !!clientIp,
-          apMac: !!apMac,
-          ssidName: !!ssidName,
-          radioId: !!radioId,
-          site: !!site
-        }
+          clientMac: Boolean(clientMac),
+          clientIp: Boolean(clientIp),
+          apMac: Boolean(apMac),
+          ssidName: Boolean(ssidName),
+          radioId: radioId !== "",
+          site: Boolean(site),
+        },
       });
     }
 
-    /*
-     * STEP 1
-     * Login using the Hotspot Operator account.
-     */
+    // ============================================================
+    // 3. LOGIN TO OMADA USING HOTSPOT OPERATOR ACCOUNT
+    // ============================================================
+
     const loginUrl =
-      `${controllerUrl}/${controllerId}/api/v2/hotspot/login`;
+      `${controllerUrl}/${encodeURIComponent(controllerId)}` +
+      `/api/v2/hotspot/login`;
 
     const loginResponse = await fetch(loginUrl, {
       method: "POST",
+
       headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json"
+        Accept: "application/json",
       },
+
       body: JSON.stringify({
         name: username,
-        password: password
-      })
+        password: password,
+      }),
     });
 
     const loginText = await loginResponse.text();
@@ -92,49 +134,63 @@ module.exports = async function handler(req, res) {
         ok: false,
         error: "Omada returned an invalid login response.",
         status: loginResponse.status,
-        response: loginText.slice(0, 500)
+        response: loginText.slice(0, 500),
       });
     }
 
-    if (!loginResponse.ok || loginData.errorCode !== 0) {
+    if (
+      !loginResponse.ok ||
+      Number(loginData.errorCode) !== 0
+    ) {
       return res.status(502).json({
         ok: false,
         error: "Omada Hotspot Operator login failed.",
-        omada: loginData
+        status: loginResponse.status,
+        omada: loginData,
       });
     }
 
-    const csrfToken = loginData?.result?.token;
+    // ============================================================
+    // 4. GET CSRF TOKEN
+    // ============================================================
+
+    const csrfToken =
+      loginData?.result?.token ||
+      loginData?.value ||
+      "";
 
     if (!csrfToken) {
       return res.status(502).json({
         ok: false,
-        error: "Omada did not return a CSRF token."
+        error: "Omada login succeeded but no CSRF token was returned.",
       });
     }
 
-    /*
-     * Omada also requires the session cookie returned
-     * by the login request.
-     */
+    // ============================================================
+    // 5. GET OMADA SESSION COOKIE
+    // ============================================================
+
     let sessionCookie = "";
 
+    // Modern Node/Vercel fetch implementation
     if (
       loginResponse.headers &&
       typeof loginResponse.headers.getSetCookie === "function"
     ) {
-      sessionCookie = loginResponse.headers
-        .getSetCookie()
-        .map(cookie => cookie.split(";")[0])
+      const cookies = loginResponse.headers.getSetCookie();
+
+      sessionCookie = cookies
+        .map((cookie) => cookie.split(";")[0])
         .join("; ");
     } else {
-      sessionCookie =
+      // Fallback
+      const rawCookie =
         loginResponse.headers.get("set-cookie") || "";
 
-      if (sessionCookie) {
-        sessionCookie = sessionCookie
-          .split(",")
-          .map(cookie => cookie.split(";")[0])
+      if (rawCookie) {
+        sessionCookie = rawCookie
+          .split(/,(?=[^;,]+=)/)
+          .map((cookie) => cookie.split(";")[0])
           .join("; ");
       }
     }
@@ -142,51 +198,62 @@ module.exports = async function handler(req, res) {
     if (!sessionCookie) {
       return res.status(502).json({
         ok: false,
-        error: "Omada login succeeded but no session cookie was returned."
+        error:
+          "Omada login succeeded but no session cookie was returned.",
       });
     }
 
-    /*
-     * STEP 2
-     * Authorize the Wi-Fi client.
-     */
-    const authUrl =
-      `${controllerUrl}/${controllerId}/api/v2/hotspot/extPortal/auth`;
+    // ============================================================
+    // 6. BUILD OMADA AUTHORIZATION URL
+    // ============================================================
 
-    // Default authorization duration: 8 hours
-    const authTime = 8 * 60 * 60 * 1000;
+    const authUrl =
+      `${controllerUrl}/${encodeURIComponent(controllerId)}` +
+      `/api/v2/hotspot/extPortal/auth` +
+      `?token=${encodeURIComponent(csrfToken)}`;
+
+    // ============================================================
+    // 7. AUTHORIZATION TIME
+    // ============================================================
+
+    // TP-Link External Portal API specifies microseconds.
+    // 8 hours = 28,800 seconds
+    // 28,800 × 1,000,000 = 28,800,000,000 microseconds
+    const authTime = 8 * 60 * 60 * 1000 * 1000;
+
+    // ============================================================
+    // 8. BUILD EAP AUTHORIZATION PAYLOAD
+    // ============================================================
 
     const authPayload = {
-      clientMac,
-      apMac,
-      ssidName,
-      radioId,
+      clientMac: clientMac,
+      apMac: apMac,
+      ssidName: ssidName,
+      radioId: Number(radioId),
+      site: site,
       time: authTime,
-      authType: 4
+      authType: 4,
     };
 
-    // Include these when Omada supplied them
-    if (clientIp) {
-      authPayload.clientIp = clientIp;
-    }
-
-    if (site) {
-      authPayload.site = site;
-    }
-
-    if (originUrl) {
-      authPayload.originUrl = originUrl;
-    }
+    // ============================================================
+    // 9. SEND AUTHORIZATION REQUEST TO OMADA
+    // ============================================================
 
     const authResponse = await fetch(authUrl, {
       method: "POST",
+
       headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json",
+        Accept: "application/json",
+
+        // Omada CSRF protection
         "Csrf-Token": csrfToken,
-        "Cookie": sessionCookie
+
+        // Omada requires the login session cookie
+        Cookie: sessionCookie,
       },
-      body: JSON.stringify(authPayload)
+
+      body: JSON.stringify(authPayload),
     });
 
     const authText = await authResponse.text();
@@ -194,27 +261,42 @@ module.exports = async function handler(req, res) {
     let authData;
 
     try {
-      authData = JSON.parse(authText);
+      authData = authText
+        ? JSON.parse(authText)
+        : {};
     } catch {
       return res.status(502).json({
         ok: false,
         error: "Omada returned an invalid authorization response.",
         status: authResponse.status,
-        response: authText.slice(0, 500)
+        response: authText.slice(0, 500),
       });
     }
 
-    if (!authResponse.ok || authData.errorCode !== 0) {
+    // ============================================================
+    // 10. CHECK OMADA RESULT
+    // ============================================================
+
+    if (
+      !authResponse.ok ||
+      Number(authData.errorCode) !== 0
+    ) {
       return res.status(502).json({
         ok: false,
         error: "Omada client authorization failed.",
-        omada: authData
+        status: authResponse.status,
+        omada: authData,
       });
     }
 
+    // ============================================================
+    // 11. SUCCESS
+    // ============================================================
+
     return res.status(200).json({
       ok: true,
-      message: "Wi-Fi client authorized successfully."
+      message: "Wi-Fi client authorized successfully.",
+      redirectUrl: originUrl || null,
     });
 
   } catch (error) {
@@ -222,7 +304,9 @@ module.exports = async function handler(req, res) {
 
     return res.status(500).json({
       ok: false,
-      error: error?.message || "Internal server error."
+      error:
+        error?.message ||
+        "Internal server error.",
     });
   }
 };
