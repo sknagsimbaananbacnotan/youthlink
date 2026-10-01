@@ -1,0 +1,2 @@
+const {env,cors,sign}=require('./_lib');
+module.exports=async(req,res)=>{cors(res);if(req.method==='OPTIONS')return res.status(204).end();if(req.method!=='POST')return res.status(405).json({error:'Method not allowed'});try{const p=(req.body||{}).password||'';if(p!==env('WIFI_ADMIN_PASSWORD'))return res.status(401).json({error:'Invalid administrator password'});return res.json({token:sign({role:'wifi-admin',exp:Date.now()+8*60*60*1000})})}catch(e){return res.status(500).json({error:e.message})}};
