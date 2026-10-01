@@ -1,5 +1,5 @@
-import legacyHandler from '../../../../legacy-api/sms-logs.js';
-import { runLegacy } from '../../../../lib/legacy-adapter.js';
+import legacyHandler from '../../../legacy-api/sms-logs.js';
+import { runLegacy } from '../../../lib/legacy-adapter.js';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 async function handle(request){ return runLegacy(legacyHandler, request); }
